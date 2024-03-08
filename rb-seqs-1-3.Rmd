@@ -189,7 +189,7 @@ colnames(AUC_ran) <- c("iteration", "ES", "SPP")
 minran <- c(min(AUC_ran$ES), min(AUC_ran$SPP), "random min")
 maxran <- c(max(AUC_ran$ES), max(AUC_ran$SPP), "random max")
 meanran <- c(mean(AUC_ran$ES), mean(AUC_ran$SPP), "random avg")
-save(AUC_ran, minran, maxran, meanran, file = "./RandomSims.RData")
+save(AUC_ran, minran, maxran, meanran, file = "./seq1-3.RData")
 ```
 ```
 
