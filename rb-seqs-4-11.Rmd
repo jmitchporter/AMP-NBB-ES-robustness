@@ -360,5 +360,5 @@ net_ES$n <- num - net_ES$pri_ext
 ```
 
 ```{r}
-save(net1, net1_ES, stats_spp1, stats_ES1, net2, net2_ES, stats_spp2, stats_ES2, net3, net3_ES, stats_spp3, stats_ES3, net4, net4_ES, stats_spp4, stats_ES4, net5, net5_ES, stats_spp5, stats_ES5, net6, net6_ES, stats_spp6, stats_ES6, net7, net7_ES, stats_spp7, stats_ES7, net8, net8_ES, stats_spp8, stats_ES8, all, supporters, providers, ES, other, file = "./Simulaciones.RData")
+save(net1, net1_ES, stats_spp1, stats_ES1, net2, net2_ES, stats_spp2, stats_ES2, net3, net3_ES, stats_spp3, stats_ES3, net4, net4_ES, stats_spp4, stats_ES4, net5, net5_ES, stats_spp5, stats_ES5, net6, net6_ES, stats_spp6, stats_ES6, net7, net7_ES, stats_spp7, stats_ES7, net8, net8_ES, stats_spp8, stats_ES8, all, supporters, providers, ES, other, file = "./seq4-11.RData")
 ```
