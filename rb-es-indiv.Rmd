@@ -1,0 +1,1567 @@
+---
+title: "rb-es-indiv"
+author: "Mitch Porter"
+date: "2024-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#load packages
+library(igraph)
+library(tidyverse)
+library(multiweb)
+library(DescTools)
+library(ggplot2)
+library(NetIndices)
+
+#load data
+load("./seq1-3.RData")
+load("./seq4-11.RData")
+nodes <- read.csv("./nodes.csv")
+links <- read.csv("./links.csv")
+```
+
+```{r}
+#track ES loss for each sequence
+
+#FI
+stats_FI4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI4 <- rbind(stats_FI4, ES_lost)
+}
+
+stats_FI4$pri_ext <- 1:nrow(stats_FI4)
+num <- count(stats_FI4)
+num <- as.integer(num)
+stats_FI4$n <- num - stats_FI1$pri_ext
+
+stats_FI5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI5 <- rbind(stats_FI5, ES_lost)
+}
+
+stats_FI5$pri_ext <- 1:nrow(stats_FI5)
+num <- count(stats_FI5)
+num <- as.integer(num)
+stats_FI5$n <- num - stats_FI5$pri_ext
+
+stats_FI5 <- top_n(stats_FI5, 371, n)
+
+stats_FI6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI6 <- rbind(stats_FI6, ES_lost)
+}
+
+stats_FI6$pri_ext <- 1:nrow(stats_FI6)
+num <- count(stats_FI6)
+num <- as.integer(num)
+stats_FI6$n <- num - stats_FI6$pri_ext
+
+stats_FI7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI7 <- rbind(stats_FI7, ES_lost)
+}
+
+stats_FI7$pri_ext <- 1:nrow(stats_FI7)
+num <- count(stats_FI7)
+num <- as.integer(num)
+stats_FI7$n <- num - stats_FI7$pri_ext
+
+stats_FI8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI8 <- rbind(stats_FI8, ES_lost)
+}
+
+stats_FI8$pri_ext <- 1:nrow(stats_FI8)
+num <- count(stats_FI8)
+num <- as.integer(num)
+stats_FI8$n <- num - stats_FI8$pri_ext
+
+stats_FI8 <- top_n(stats_FI8, 92, n)
+
+stats_FI9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI9 <- rbind(stats_FI9, ES_lost)
+}
+
+stats_FI9$pri_ext <- 1:nrow(stats_FI9)
+num <- count(stats_FI9)
+num <- as.integer(num)
+stats_FI9$n <- num - stats_FI9$pri_ext
+
+stats_FI9 <- top_n(stats_FI9, 118, n)
+
+stats_FI10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI10 <- rbind(stats_FI10, ES_lost)
+}
+
+stats_FI10$pri_ext <- 1:nrow(stats_FI10)
+num <- count(stats_FI10)
+num <- as.integer(num)
+stats_FI10$n <- num - stats_FI10$pri_ext
+
+stats_FI10 <- top_n(stats_FI10, 152, n)
+
+stats_FI11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  FI <- c("FI")
+  species_diff <- intersect(FI,species)
+  ES_lost <- (length(FI)-length(species_diff))
+  stats_FI11 <- rbind(stats_FI11, ES_lost)
+}
+
+stats_FI11$pri_ext <- 1:nrow(stats_FI11)
+num <- count(stats_FI11)
+num <- as.integer(num)
+stats_FI11$n <- num - stats_FI11$pri_ext
+
+stats_FI11 <- top_n(stats_FI11, 64, n)
+
+#RM
+stats_RM4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM4 <- rbind(stats_RM4, ES_lost)
+}
+
+stats_RM4$pri_ext <- 1:nrow(stats_RM4)
+num <- count(stats_RM4)
+num <- as.integer(num)
+stats_RM4$n <- num - stats_RM4$pri_ext
+
+stats_RM5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM5 <- rbind(stats_RM5, ES_lost)
+}
+
+stats_RM5$pri_ext <- 1:nrow(stats_RM5)
+num <- count(stats_RM5)
+num <- as.integer(num)
+stats_RM5$n <- num - stats_RM5$pri_ext
+
+stats_RM5 <- top_n(stats_RM5, 371, n)
+
+stats_RM6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM6 <- rbind(stats_RM6, ES_lost)
+}
+
+stats_RM6$pri_ext <- 1:nrow(stats_RM6)
+num <- count(stats_RM6)
+num <- as.integer(num)
+stats_RM6$n <- num - stats_RM6$pri_ext
+
+stats_RM7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM7 <- rbind(stats_RM7, ES_lost)
+}
+
+stats_RM7$pri_ext <- 1:nrow(stats_RM7)
+num <- count(stats_RM7)
+num <- as.integer(num)
+stats_RM7$n <- num - stats_RM7$pri_ext
+
+stats_RM8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM8 <- rbind(stats_RM8, ES_lost)
+}
+
+stats_RM8$pri_ext <- 1:nrow(stats_RM8)
+num <- count(stats_RM8)
+num <- as.integer(num)
+stats_RM8$n <- num - stats_RM8$pri_ext
+
+stats_RM8 <- top_n(stats_RM8, 92, n)
+
+stats_RM9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM9 <- rbind(stats_RM9, ES_lost)
+}
+
+stats_RM9$pri_ext <- 1:nrow(stats_RM9)
+num <- count(stats_RM9)
+num <- as.integer(num)
+stats_RM9$n <- num - stats_RM9$pri_ext
+
+stats_RM9 <- top_n(stats_RM9, 118, n)
+
+stats_RM10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM10 <- rbind(stats_RM10, ES_lost)
+}
+
+stats_RM10$pri_ext <- 1:nrow(stats_RM10)
+num <- count(stats_RM10)
+num <- as.integer(num)
+stats_RM10$n <- num - stats_RM10$pri_ext
+
+stats_RM10 <- top_n(stats_RM10, 152, n)
+
+stats_RM11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  RM <- c("RM")
+  species_diff <- intersect(RM,species)
+  ES_lost <- (length(RM)-length(species_diff))
+  stats_RM11 <- rbind(stats_RM11, ES_lost)
+}
+
+stats_RM11$pri_ext <- 1:nrow(stats_RM11)
+num <- count(stats_RM11)
+num <- as.integer(num)
+stats_RM11$n <- num - stats_RM11$pri_ext
+
+stats_RM11 <- top_n(stats_RM11, 64, n)
+
+
+#BD
+stats_BD4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD4 <- rbind(stats_BD4, ES_lost)
+}
+
+stats_BD4$pri_ext <- 1:nrow(stats_BD4)
+num <- count(stats_BD4)
+num <- as.integer(num)
+stats_BD4$n <- num - stats_BD4$pri_ext
+
+stats_BD5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD5 <- rbind(stats_BD5, ES_lost)
+}
+
+stats_BD5$pri_ext <- 1:nrow(stats_BD5)
+num <- count(stats_BD5)
+num <- as.integer(num)
+stats_BD5$n <- num - stats_BD5$pri_ext
+
+stats_BD5 <- top_n(stats_BD5, 371, n)
+
+stats_BD6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD6 <- rbind(stats_BD6, ES_lost)
+}
+
+stats_BD6$pri_ext <- 1:nrow(stats_BD6)
+num <- count(stats_BD3)
+num <- as.integer(num)
+stats_BD6$n <- num - stats_BD6$pri_ext
+
+stats_BD7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD7 <- rbind(stats_BD7, ES_lost)
+}
+
+stats_BD7$pri_ext <- 1:nrow(stats_BD7)
+num <- count(stats_BD7)
+num <- as.integer(num)
+stats_BD7$n <- num - stats_BD7$pri_ext
+
+stats_BD8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD8 <- rbind(stats_BD8, ES_lost)
+}
+
+stats_BD8$pri_ext <- 1:nrow(stats_BD8)
+num <- count(stats_BD8)
+num <- as.integer(num)
+stats_BD8$n <- num - stats_BD8$pri_ext
+
+stats_BD8 <- top_n(stats_BD8, 92, n)
+
+stats_BD9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD9 <- rbind(stats_BD9, ES_lost)
+}
+
+stats_BD9$pri_ext <- 1:nrow(stats_BD9)
+num <- count(stats_BD9)
+num <- as.integer(num)
+stats_BD9$n <- num - stats_BD9$pri_ext
+
+stats_BD9 <- top_n(stats_BD9, 118, n)
+
+stats_BD10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD10 <- rbind(stats_BD10, ES_lost)
+}
+
+stats_BD10$pri_ext <- 1:nrow(stats_BD10)
+num <- count(stats_BD10)
+num <- as.integer(num)
+stats_BD10$n <- num - stats_BD10$pri_ext
+
+stats_BD10 <- top_n(stats_BD10, 152, n)
+
+stats_BD11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  BD <- c("BD")
+  species_diff <- intersect(BD,species)
+  ES_lost <- (length(BD)-length(species_diff))
+  stats_BD11 <- rbind(stats_BD11, ES_lost)
+}
+stats_BD11$pri_ext <- 1:nrow(stats_BD11)
+num <- count(stats_BD11)
+num <- as.integer(num)
+stats_BD11$n <- num - stats_BD11$pri_ext
+
+stats_BD11 <- top_n(stats_BD11, 64, n)
+
+
+#BP
+stats_BP4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP4 <- rbind(stats_BP4, ES_lost)
+}
+
+stats_BP4$pri_ext <- 1:nrow(stats_BP4)
+num <- count(stats_BP4)
+num <- as.integer(num)
+stats_BP4$n <- num - stats_BP4$pri_ext
+
+stats_BP5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP5 <- rbind(stats_BP5, ES_lost)
+}
+
+stats_BP5$pri_ext <- 1:nrow(stats_BP5)
+num <- count(stats_BP5)
+num <- as.integer(num)
+stats_BP5$n <- num - stats_BP5$pri_ext
+
+stats_BP5 <- top_n(stats_BP5, 371, n)
+
+stats_BP6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP6 <- rbind(stats_BP6, ES_lost)
+}
+
+stats_BP6$pri_ext <- 1:nrow(stats_BP6)
+num <- count(stats_BP6)
+num <- as.integer(num)
+stats_BP6$n <- num - stats_BP6$pri_ext
+
+stats_BP7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP7 <- rbind(stats_BP7, ES_lost)
+}
+
+stats_BP7$pri_ext <- 1:nrow(stats_BP7)
+num <- count(stats_BP7)
+num <- as.integer(num)
+stats_BP7$n <- num - stats_BP7$pri_ext
+
+stats_BP8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP8 <- rbind(stats_BP8, ES_lost)
+}
+
+stats_BP8$pri_ext <- 1:nrow(stats_BP8)
+num <- count(stats_BP8)
+num <- as.integer(num)
+stats_BP8$n <- num - stats_BP8$pri_ext
+
+stats_BP8 <- top_n(stats_BP8, 92, n)
+
+stats_BP9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP9 <- rbind(stats_BP9, ES_lost)
+}
+
+stats_BP9$pri_ext <- 1:nrow(stats_BP9)
+num <- count(stats_BP9)
+num <- as.integer(num)
+stats_BP9$n <- num - stats_BP9$pri_ext
+
+stats_BP9 <- top_n(stats_BP9, 118, n)
+
+stats_BP10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP10 <- rbind(stats_BP10, ES_lost)
+}
+
+stats_BP10$pri_ext <- 1:nrow(stats_BP10)
+num <- count(stats_BP10)
+num <- as.integer(num)
+stats_BP10$n <- num - stats_BP10$pri_ext
+
+stats_BP10 <- top_n(stats_BP10, 152, n)
+
+stats_BP11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  BP <- c("BP")
+  species_diff <- intersect(BP,species)
+  ES_lost <- (length(BP)-length(species_diff))
+  stats_BP11 <- rbind(stats_BP11, ES_lost)
+}
+
+stats_BP11$pri_ext <- 1:nrow(stats_BP11)
+num <- count(stats_BP11)
+num <- as.integer(num)
+stats_BP11$n <- num - stats_BP11$pri_ext
+
+stats_BP11 <- top_n(stats_BP11, 64, n)
+
+#CC
+stats_CC4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC4 <- rbind(stats_CC4, ES_lost)
+}
+
+stats_CC4$pri_ext <- 1:nrow(stats_CC4)
+num <- count(stats_CC4)
+num <- as.integer(num)
+stats_CC4$n <- num - stats_CC4$pri_ext
+
+stats_CC5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC5 <- rbind(stats_CC5, ES_lost)
+}
+
+stats_CC5$pri_ext <- 1:nrow(stats_CC5)
+num <- count(stats_CC5)
+num <- as.integer(num)
+stats_CC5$n <- num - stats_CC5$pri_ext
+
+stats_CC5 <- top_n(stats_CC5, 371, n)
+
+stats_CC6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC6 <- rbind(stats_CC5, ES_lost)
+}
+
+stats_CC6$pri_ext <- 1:nrow(stats_CC6)
+num <- count(stats_CC6)
+num <- as.integer(num)
+stats_CC6$n <- num - stats_CC6$pri_ext
+
+stats_CC7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC7 <- rbind(stats_CC7, ES_lost)
+}
+
+stats_CC7$pri_ext <- 1:nrow(stats_CC7)
+num <- count(stats_CC7)
+num <- as.integer(num)
+stats_CC7$n <- num - stats_CC7$pri_ext
+
+stats_CC8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC8 <- rbind(stats_CC8, ES_lost)
+}
+
+stats_CC8$pri_ext <- 1:nrow(stats_CC8)
+num <- count(stats_CC8)
+num <- as.integer(num)
+stats_CC8$n <- num - stats_CC8$pri_ext
+
+stats_CC8 <- top_n(stats_CC8, 92, n)
+
+stats_CC9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC9 <- rbind(stats_CC9, ES_lost)
+}
+
+stats_CC9$pri_ext <- 1:nrow(stats_CC9)
+num <- count(stats_CC9)
+num <- as.integer(num)
+stats_CC9$n <- num - stats_CC9$pri_ext
+
+stats_CC9 <- top_n(stats_CC9, 118, n)
+
+stats_CC10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC10 <- rbind(stats_CC10, ES_lost)
+}
+
+stats_CC10$pri_ext <- 1:nrow(stats_CC10)
+num <- count(stats_CC10)
+num <- as.integer(num)
+stats_CC10$n <- num - stats_CC10$pri_ext
+
+stats_CC10 <- top_n(stats_CC10, 152, n)
+
+stats_CC11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  CC <- c("CC")
+  species_diff <- intersect(CC,species)
+  ES_lost <- (length(CC)-length(species_diff))
+  stats_CC11 <- rbind(stats_CC11, ES_lost)
+}
+
+stats_CC11$pri_ext <- 1:nrow(stats_CC11)
+num <- count(stats_CC11)
+num <- as.integer(num)
+stats_CC11$n <- num - stats_CC11$pri_ext
+
+stats_CC11 <- top_n(stats_CC11, 64, n)
+
+#CS
+stats_CS4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS4 <- rbind(stats_CS4, ES_lost)
+}
+
+stats_CS4$pri_ext <- 1:nrow(stats_CS4)
+num <- count(stats_CS1)
+num <- as.integer(num)
+stats_CS4$n <- num - stats_CS4$pri_ext
+
+stats_CS5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS5 <- rbind(stats_CS5, ES_lost)
+}
+
+stats_CS5$pri_ext <- 1:nrow(stats_CS5)
+num <- count(stats_CS5)
+num <- as.integer(num)
+stats_CS5$n <- num - stats_CS5$pri_ext
+
+stats_CS5 <- top_n(stats_CS5, 371, n)
+
+stats_CS6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS6 <- rbind(stats_CS6, ES_lost)
+}
+
+stats_CS6$pri_ext <- 1:nrow(stats_CS6)
+num <- count(stats_CS6)
+num <- as.integer(num)
+stats_CS6$n <- num - stats_CS6$pri_ext
+
+stats_CS7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS7 <- rbind(stats_CS7, ES_lost)
+}
+
+stats_CS7$pri_ext <- 1:nrow(stats_CS7)
+num <- count(stats_CS7)
+num <- as.integer(num)
+stats_CS7$n <- num - stats_CS7$pri_ext
+
+stats_CS8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS8 <- rbind(stats_CS8, ES_lost)
+}
+
+stats_CS8$pri_ext <- 1:nrow(stats_CS8)
+num <- count(stats_CS8)
+num <- as.integer(num)
+stats_CS8$n <- num - stats_CS8$pri_ext
+
+stats_CS8 <- top_n(stats_CS8, 92, n)
+
+stats_CS9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS9 <- rbind(stats_CS9, ES_lost)
+}
+
+stats_CS9$pri_ext <- 1:nrow(stats_CS9)
+num <- count(stats_CS9)
+num <- as.integer(num)
+stats_CS9$n <- num - stats_CS9$pri_ext
+
+stats_CS9 <- top_n(stats_CS9, 118, n)
+
+stats_CS10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS10 <- rbind(stats_CS10, ES_lost)
+}
+
+stats_CS10$pri_ext <- 1:nrow(stats_CS10)
+num <- count(stats_CS10)
+num <- as.integer(num)
+stats_CS10$n <- num - stats_CS10$pri_ext
+
+stats_CS10 <- top_n(stats_CS10, 152, n)
+
+stats_CS11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  CS <- c("CS")
+  species_diff <- intersect(CS,species)
+  ES_lost <- (length(CS)-length(species_diff))
+  stats_CS11 <- rbind(stats_CS11, ES_lost)
+}
+
+stats_CS11$pri_ext <- 1:nrow(stats_CS11)
+num <- count(stats_CS11)
+num <- as.integer(num)
+stats_CS11$n <- num - stats_CS11$pri_ext
+
+stats_CS11 <- top_n(stats_CS11, 64, n)
+
+#ID
+stats_ID4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID4 <- rbind(stats_ID4, ES_lost)
+}
+
+stats_ID4$pri_ext <- 1:nrow(stats_ID4)
+num <- count(stats_ID4)
+num <- as.integer(num)
+stats_ID4$n <- num - stats_ID4$pri_ext
+
+stats_ID5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID5 <- rbind(stats_ID5, ES_lost)
+}
+
+stats_ID5$pri_ext <- 1:nrow(stats_ID5)
+num <- count(stats_ID5)
+num <- as.integer(num)
+stats_ID5$n <- num - stats_ID5$pri_ext
+
+stats_ID5 <- top_n(stats_ID5, 371, n)
+
+stats_ID6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID6 <- rbind(stats_ID6, ES_lost)
+}
+
+stats_ID6$pri_ext <- 1:nrow(stats_ID6)
+num <- count(stats_ID6)
+num <- as.integer(num)
+stats_ID6$n <- num - stats_ID6$pri_ext
+
+stats_ID7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID7 <- rbind(stats_ID7, ES_lost)
+}
+
+stats_ID7$pri_ext <- 1:nrow(stats_ID7)
+num <- count(stats_ID7)
+num <- as.integer(num)
+stats_ID7$n <- num - stats_ID7$pri_ext
+
+stats_ID8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID8 <- rbind(stats_ID8, ES_lost)
+}
+
+stats_ID8$pri_ext <- 1:nrow(stats_ID8)
+num <- count(stats_ID8)
+num <- as.integer(num)
+stats_ID8$n <- num - stats_ID8$pri_ext
+
+stats_ID8 <- top_n(stats_ID8, 92, n)
+
+stats_ID9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID9 <- rbind(stats_ID9, ES_lost)
+}
+
+stats_ID9$pri_ext <- 1:nrow(stats_ID9)
+num <- count(stats_ID9)
+num <- as.integer(num)
+stats_ID9$n <- num - stats_ID9$pri_ext
+
+stats_ID9 <- top_n(stats_ID9, 118, n)
+
+stats_ID10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID10 <- rbind(stats_ID10, ES_lost)
+}
+
+stats_ID10$pri_ext <- 1:nrow(stats_ID10)
+num <- count(stats_ID10)
+num <- as.integer(num)
+stats_ID10$n <- num - stats_ID10$pri_ext
+
+stats_ID10 <- top_n(stats_ID10, 152, n)
+
+stats_ID11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  ID <- c("ID")
+  species_diff <- intersect(ID,species)
+  ES_lost <- (length(ID)-length(species_diff))
+  stats_ID11 <- rbind(stats_ID11, ES_lost)
+}
+
+stats_ID11$pri_ext <- 1:nrow(stats_ID11)
+num <- count(stats_ID11)
+num <- as.integer(num)
+stats_ID11$n <- num - stats_ID11$pri_ext
+
+stats_ID11 <- top_n(stats_ID11, 64, n)
+
+#EE
+stats_EE4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE4 <- rbind(stats_EE4, ES_lost)
+}
+
+stats_EE4$pri_ext <- 1:nrow(stats_EE4)
+num <- count(stats_EE4)
+num <- as.integer(num)
+stats_EE4$n <- num - stats_EE4$pri_ext
+
+stats_EE5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE5 <- rbind(stats_EE5, ES_lost)
+}
+
+stats_EE5$pri_ext <- 1:nrow(stats_EE5)
+num <- count(stats_EE5)
+num <- as.integer(num)
+stats_EE5$n <- num - stats_EE5$pri_ext
+
+stats_EE5 <- top_n(stats_EE5, 371, n)
+
+stats_EE6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE6 <- rbind(stats_EE6, ES_lost)
+}
+
+stats_EE6$pri_ext <- 1:nrow(stats_EE6)
+num <- count(stats_EE6)
+num <- as.integer(num)
+stats_EE6$n <- num - stats_EE6$pri_ext
+
+stats_EE7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE7 <- rbind(stats_EE7, ES_lost)
+}
+
+stats_EE7$pri_ext <- 1:nrow(stats_EE7)
+num <- count(stats_EE7)
+num <- as.integer(num)
+stats_EE7$n <- num - stats_EE7$pri_ext
+
+stats_EE8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE8 <- rbind(stats_EE8, ES_lost)
+}
+
+stats_EE8$pri_ext <- 1:nrow(stats_EE8)
+num <- count(stats_EE8)
+num <- as.integer(num)
+stats_EE8$n <- num - stats_EE8$pri_ext
+
+stats_EE8 <- top_n(stats_EE8, 92, n)
+
+stats_EE9 <- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE9 <- rbind(stats_EE9, ES_lost)
+}
+
+stats_EE9$pri_ext <- 1:nrow(stats_EE9)
+num <- count(stats_EE9)
+num <- as.integer(num)
+stats_EE9$n <- num - stats_EE9$pri_ext
+
+stats_EE9 <- top_n(stats_EE9, 118, n)
+
+stats_EE10 <- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE10 <- rbind(stats_EE10, ES_lost)
+}
+
+stats_EE10$pri_ext <- 1:nrow(stats_EE10)
+num <- count(stats_EE10)
+num <- as.integer(num)
+stats_EE10$n <- num - stats_EE10$pri_ext
+
+stats_EE10 <- top_n(stats_EE10, 152, n)
+
+stats_EE11 <- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  EE <- c("EE")
+  species_diff <- intersect(EE,species)
+  ES_lost <- (length(EE)-length(species_diff))
+  stats_EE11 <- rbind(stats_EE11, ES_lost)
+}
+
+stats_EE11$pri_ext <- 1:nrow(stats_EE11)
+num <- count(stats_EE11)
+num <- as.integer(num)
+stats_EE11$n <- num - stats_EE11$pri_ext
+
+stats_EE11 <- top_n(stats_EE11, 64, n)
+
+```
+
+```{r}
+#rb calculation
+SPPnodes <- subset(nodes, nodes$vertextype < 30)
+SPPlinks <- subset(links, links$edgetype == 0)
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes)
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(nodes, nodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+all <- as.vector(SPPnodes[,1])
+ESall <- length(all) + length(ES)
+susc <- length(all)-basal
+
+#FI
+stats_FI4$prop_surv <- (1-stats_FI4$X0L)
+stats_FI4$prop_ext <- stats_FI4$pri_ext/ESall
+stats_FI4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI4)+1, prop_surv = 1, prop_ext = 0), stats_FI4)
+AUC_FI4 <- AUC(stats_FI4$prop_ext, stats_FI4$prop_surv, from = min(min(stats_FI4$prop_ext)), to = max(max(stats_FI4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI5$prop_surv <- (1-stats_FI5$X0L)
+stats_FI5$prop_ext <- stats_FI5$pri_ext/ESall
+stats_FI5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI5)+1, prop_surv = 1, prop_ext = 0), stats_FI5)
+AUC_FI5 <- AUC(stats_FI5$prop_ext, stats_FI5$prop_surv, from = min(min(stats_FI5$prop_ext)), to = max(max(stats_FI5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI6$prop_surv <- (1-stats_FI6$X0L)
+stats_FI6$prop_ext <- stats_FI6$pri_ext/length(supporters)
+stats_FI6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI6)+1, prop_surv = 1, prop_ext = 0), stats_FI6)
+AUC_FI6 <- AUC(stats_FI6$prop_ext, stats_FI6$prop_surv, from = min(min(stats_FI6$prop_ext)), to = max(max(stats_FI6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI7$prop_surv <- (1-stats_FI7$X0L)
+stats_FI7$prop_ext <- stats_FI7$pri_ext/length(supporters)
+stats_FI7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI7)+1, prop_surv = 1, prop_ext = 0), stats_FI7)
+AUC_FI7 <- AUC(stats_FI7$prop_ext, stats_FI7$prop_surv, from = min(min(stats_FI7$prop_ext)), to = max(max(stats_FI7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI8$prop_surv <- (1-stats_FI8$X0L)
+stats_FI8$prop_ext <- stats_FI8$pri_ext/length(supporters)
+stats_FI8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI8)+1, prop_surv = 1, prop_ext = 0), stats_FI8)
+AUC_FI8 <- AUC(stats_FI8$prop_ext, stats_FI8$prop_surv, from = min(min(stats_FI8$prop_ext)), to = max(max(stats_FI8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI9$prop_surv <- (1-stats_FI9$X0L)
+stats_FI9$prop_ext <- stats_FI9$pri_ext/length(providers)
+stats_FI9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI9)+1, prop_surv = 1, prop_ext = 0), stats_FI9)
+AUC_FI9 <- AUC(stats_FI9$prop_ext, stats_FI9$prop_surv, from = min(min(stats_FI9$prop_ext)), to = max(max(stats_FI9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI10$prop_surv <- (1-stats_FI10$X0L)
+stats_FI10$prop_ext <- stats_FI10$pri_ext/ESall
+stats_FI10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI10)+1, prop_surv = 1, prop_ext = 0), stats_FI10)
+AUC_FI10 <- AUC(stats_FI10$prop_ext, stats_FI10$prop_surv, from = min(min(stats_FI10$prop_ext)), to = max(max(stats_FI10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_FI11$prop_surv <- (1-stats_FI11$X0L)
+stats_FI11$prop_ext <- stats_FI11$pri_ext/ESall
+stats_FI11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_FI11)+1, prop_surv = 1, prop_ext = 0), stats_FI11)
+AUC_FI11 <- AUC(stats_FI11$prop_ext, stats_FI11$prop_surv, from = min(min(stats_FI11$prop_ext)), to = max(max(stats_FI11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#RM
+stats_RM4$prop_surv <- (1-stats_RM4$X0L)
+stats_RM4$prop_ext <- stats_RM4$pri_ext/ESall
+stats_RM4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM4)+1, prop_surv = 1, prop_ext = 0), stats_RM4)
+AUC_RM4 <- AUC(stats_RM4$prop_ext, stats_RM4$prop_surv, from = min(min(stats_RM4$prop_ext)), to = max(max(stats_RM4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM5$prop_surv <- (1-stats_RM5$X0L)
+stats_RM5$prop_ext <- stats_RM5$pri_ext/ESall
+stats_RM5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM5)+1, prop_surv = 1, prop_ext = 0), stats_RM5)
+AUC_RM5 <- AUC(stats_RM5$prop_ext, stats_RM5$prop_surv, from = min(min(stats_RM5$prop_ext)), to = max(max(stats_RM5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM6$prop_surv <- (1-stats_RM6$X0L)
+stats_RM6$prop_ext <- stats_RM6$pri_ext/length(supporters)
+stats_RM6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM6)+1, prop_surv = 1, prop_ext = 0), stats_RM6)
+AUC_RM6 <- AUC(stats_RM6$prop_ext, stats_RM6$prop_surv, from = min(min(stats_RM6$prop_ext)), to = max(max(stats_RM6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM7$prop_surv <- (1-stats_RM7$X0L)
+stats_RM7$prop_ext <- stats_RM7$pri_ext/length(supporters)
+stats_RM7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM7)+1, prop_surv = 1, prop_ext = 0), stats_RM7)
+AUC_RM7 <- AUC(stats_RM7$prop_ext, stats_RM7$prop_surv, from = min(min(stats_RM7$prop_ext)), to = max(max(stats_RM7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM8$prop_surv <- (1-stats_RM8$X0L)
+stats_RM8$prop_ext <- stats_RM8$pri_ext/length(supporters)
+stats_RM8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM8)+1, prop_surv = 1, prop_ext = 0), stats_RM8)
+AUC_RM8 <- AUC(stats_RM8$prop_ext, stats_RM8$prop_surv, from = min(min(stats_RM8$prop_ext)), to = max(max(stats_RM8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM9$prop_surv <- (1-stats_RM9$X0L)
+stats_RM9$prop_ext <- stats_RM9$pri_ext/length(providers)
+stats_RM9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM9)+1, prop_surv = 1, prop_ext = 0), stats_RM9)
+AUC_RM9 <- AUC(stats_RM9$prop_ext, stats_RM9$prop_surv, from = min(min(stats_RM9$prop_ext)), to = max(max(stats_RM9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM10$prop_surv <- (1-stats_RM10$X0L)
+stats_RM10$prop_ext <- stats_RM10$pri_ext/ESall
+stats_RM10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM10)+1, prop_surv = 1, prop_ext = 0), stats_RM10)
+AUC_RM10 <- AUC(stats_RM10$prop_ext, stats_RM10$prop_surv, from = min(min(stats_RM10$prop_ext)), to = max(max(stats_RM10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_RM11$prop_surv <- (1-stats_RM11$X0L)
+stats_RM11$prop_ext <- stats_RM11$pri_ext/ESall
+stats_RM11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_RM11)+1, prop_surv = 1, prop_ext = 0), stats_RM11)
+AUC_RM11 <- AUC(stats_RM11$prop_ext, stats_RM11$prop_surv, from = min(min(stats_RM11$prop_ext)), to = max(max(stats_RM11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#BD
+stats_BD4$prop_surv <- (1-stats_BD4$X0L)
+stats_BD4$prop_ext <- stats_BD4$pri_ext/ESall
+stats_BD4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD4)+1, prop_surv = 1, prop_ext = 0), stats_BD4)
+AUC_BD4 <- AUC(stats_BD4$prop_ext, stats_BD4$prop_surv, from = min(min(stats_BD4$prop_ext)), to = max(max(stats_BD4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD5$prop_surv <- (1-stats_BD5$X0L)
+stats_BD5$prop_ext <- stats_BD5$pri_ext/ESall
+stats_BD5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD5)+1, prop_surv = 1, prop_ext = 0), stats_BD5)
+AUC_BD5 <- AUC(stats_BD5$prop_ext, stats_BD5$prop_surv, from = min(min(stats_BD5$prop_ext)), to = max(max(stats_BD5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD6$prop_surv <- (1-stats_BD6$X0L)
+stats_BD6$prop_ext <- stats_BD6$pri_ext/length(supporters)
+stats_BD6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD6)+1, prop_surv = 1, prop_ext = 0), stats_BD6)
+AUC_BD6 <- AUC(stats_BD6$prop_ext, stats_BD6$prop_surv, from = min(min(stats_BD6$prop_ext)), to = max(max(stats_BD6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD7$prop_surv <- (1-stats_BD7$X0L)
+stats_BD7$prop_ext <- stats_BD7$pri_ext/length(supporters)
+stats_BD7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD7)+1, prop_surv = 1, prop_ext = 0), stats_BD7)
+AUC_BD7 <- AUC(stats_BD7$prop_ext, stats_BD7$prop_surv, from = min(min(stats_BD7$prop_ext)), to = max(max(stats_BD7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD8$prop_surv <- (1-stats_BD8$X0L)
+stats_BD8$prop_ext <- stats_BD8$pri_ext/length(supporters)
+stats_BD8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD8)+1, prop_surv = 1, prop_ext = 0), stats_BD8)
+AUC_BD8 <- AUC(stats_BD8$prop_ext, stats_BD8$prop_surv, from = min(min(stats_BD8$prop_ext)), to = max(max(stats_BD8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD9$prop_surv <- (1-stats_BD9$X0L)
+stats_BD9$prop_ext <- stats_BD9$pri_ext/length(providers)
+stats_BD9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD9)+1, prop_surv = 1, prop_ext = 0), stats_BD9)
+AUC_BD9 <- AUC(stats_BD9$prop_ext, stats_BD9$prop_surv, from = min(min(stats_BD9$prop_ext)), to = max(max(stats_BD9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD10$prop_surv <- (1-stats_BD10$X0L)
+stats_BD10$prop_ext <- stats_BD10$pri_ext/ESall
+stats_BD10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD10)+1, prop_surv = 1, prop_ext = 0), stats_BD10)
+AUC_BD10 <- AUC(stats_BD10$prop_ext, stats_BD10$prop_surv, from = min(min(stats_BD10$prop_ext)), to = max(max(stats_BD10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BD11$prop_surv <- (1-stats_BD11$X0L)
+stats_BD11$prop_ext <- stats_BD11$pri_ext/ESall
+stats_BD11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BD11)+1, prop_surv = 1, prop_ext = 0), stats_BD11)
+AUC_BD11 <- AUC(stats_BD11$prop_ext, stats_BD11$prop_surv, from = min(min(stats_BD11$prop_ext)), to = max(max(stats_BD11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#BP
+stats_BP4$prop_surv <- (1-stats_BP4$X0L)
+stats_BP4$prop_ext <- stats_BP4$pri_ext/ESall
+stats_BP4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP4)+1, prop_surv = 1, prop_ext = 0), stats_BP4)
+AUC_BP4 <- AUC(stats_BP4$prop_ext, stats_BP4$prop_surv, from = min(min(stats_BP4$prop_ext)), to = max(max(stats_BP4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP5$prop_surv <- (1-stats_BP5$X0L)
+stats_BP5$prop_ext <- stats_BP5$pri_ext/ESall
+stats_BP5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP5)+1, prop_surv = 1, prop_ext = 0), stats_BP5)
+AUC_BP5 <- AUC(stats_BP5$prop_ext, stats_BP5$prop_surv, from = min(min(stats_BP5$prop_ext)), to = max(max(stats_BP5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP6$prop_surv <- (1-stats_BP6$X0L)
+stats_BP6$prop_ext <- stats_BP6$pri_ext/length(supporters)
+stats_BP6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP6)+1, prop_surv = 1, prop_ext = 0), stats_BP6)
+AUC_BP6 <- AUC(stats_BP6$prop_ext, stats_BP6$prop_surv, from = min(min(stats_BP6$prop_ext)), to = max(max(stats_BP6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP7$prop_surv <- (1-stats_BP7$X0L)
+stats_BP7$prop_ext <- stats_BP7$pri_ext/length(supporters)
+stats_BP7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP7)+1, prop_surv = 1, prop_ext = 0), stats_BP7)
+AUC_BP7 <- AUC(stats_BP7$prop_ext, stats_BP7$prop_surv, from = min(min(stats_BP7$prop_ext)), to = max(max(stats_BP7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP8$prop_surv <- (1-stats_BP8$X0L)
+stats_BP8$prop_ext <- stats_BP8$pri_ext/length(supporters)
+stats_BP8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP8)+1, prop_surv = 1, prop_ext = 0), stats_BP8)
+AUC_BP8 <- AUC(stats_BP8$prop_ext, stats_BP8$prop_surv, from = min(min(stats_BP8$prop_ext)), to = max(max(stats_BP8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP9$prop_surv <- (1-stats_BP9$X0L)
+stats_BP9$prop_ext <- stats_BP9$pri_ext/length(providers)
+stats_BP9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP9)+1, prop_surv = 1, prop_ext = 0), stats_BP9)
+AUC_BP9 <- AUC(stats_BP9$prop_ext, stats_BP9$prop_surv, from = min(min(stats_BP9$prop_ext)), to = max(max(stats_BP9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP10$prop_surv <- (1-stats_BP10$X0L)
+stats_BP10$prop_ext <- stats_BP10$pri_ext/ESall
+stats_BP10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP10)+1, prop_surv = 1, prop_ext = 0), stats_BP10)
+AUC_BP10 <- AUC(stats_BP10$prop_ext, stats_BP10$prop_surv, from = min(min(stats_BP10$prop_ext)), to = max(max(stats_BP10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_BP11$prop_surv <- (1-stats_BP11$X0L)
+stats_BP11$prop_ext <- stats_BP11$pri_ext/ESall
+stats_BP11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_BP11)+1, prop_surv = 1, prop_ext = 0), stats_BP11)
+AUC_BP11 <- AUC(stats_BP11$prop_ext, stats_BP11$prop_surv, from = min(min(stats_BP11$prop_ext)), to = max(max(stats_BP11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#CC
+stats_CC4$prop_surv <- (1-stats_CC4$X0L)
+stats_CC4$prop_ext <- stats_CC4$pri_ext/ESall
+stats_CC4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC4)+1, prop_surv = 1, prop_ext = 0), stats_CC4)
+AUC_CC4 <- AUC(stats_CC4$prop_ext, stats_CC4$prop_surv, from = min(min(stats_CC4$prop_ext)), to = max(max(stats_CC4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC5$prop_surv <- (1-stats_CC5$X0L)
+stats_CC5$prop_ext <- stats_CC5$pri_ext/ESall
+stats_CC5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC5)+1, prop_surv = 1, prop_ext = 0), stats_CC5)
+AUC_CC5 <- AUC(stats_CC5$prop_ext, stats_CC5$prop_surv, from = min(min(stats_CC5$prop_ext)), to = max(max(stats_CC5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC6$prop_surv <- (1-stats_CC6$X0L)
+stats_CC6$prop_ext <- stats_CC6$pri_ext/length(supporters)
+stats_CC6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC6)+1, prop_surv = 1, prop_ext = 0), stats_CC6)
+AUC_CC6 <- AUC(stats_CC6$prop_ext, stats_CC6$prop_surv, from = min(min(stats_CC6$prop_ext)), to = max(max(stats_CC6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC7$prop_surv <- (1-stats_CC7$X0L)
+stats_CC7$prop_ext <- stats_CC7$pri_ext/length(supporters)
+stats_CC7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC7)+1, prop_surv = 1, prop_ext = 0), stats_CC7)
+AUC_CC7 <- AUC(stats_CC7$prop_ext, stats_CC7$prop_surv, from = min(min(stats_CC7$prop_ext)), to = max(max(stats_CC7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC8$prop_surv <- (1-stats_CC8$X0L)
+stats_CC8$prop_ext <- stats_CC8$pri_ext/length(supporters)
+stats_CC8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC8)+1, prop_surv = 1, prop_ext = 0), stats_CC8)
+AUC_CC8 <- AUC(stats_CC8$prop_ext, stats_CC8$prop_surv, from = min(min(stats_CC8$prop_ext)), to = max(max(stats_CC8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC9$prop_surv <- (1-stats_CC9$X0L)
+stats_CC9$prop_ext <- stats_CC9$pri_ext/length(providers)
+stats_CC9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC9)+1, prop_surv = 1, prop_ext = 0), stats_CC9)
+AUC_CC9 <- AUC(stats_CC9$prop_ext, stats_CC9$prop_surv, from = min(min(stats_CC9$prop_ext)), to = max(max(stats_CC9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC10$prop_surv <- (1-stats_CC10$X0L)
+stats_CC10$prop_ext <- stats_CC10$pri_ext/ESall
+stats_CC10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC10)+1, prop_surv = 1, prop_ext = 0), stats_CC10)
+AUC_CC10 <- AUC(stats_CC10$prop_ext, stats_CC10$prop_surv, from = min(min(stats_CC10$prop_ext)), to = max(max(stats_CC10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CC11$prop_surv <- (1-stats_CC11$X0L)
+stats_CC11$prop_ext <- stats_CC11$pri_ext/ESall
+stats_CC11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CC11)+1, prop_surv = 1, prop_ext = 0), stats_CC11)
+AUC_CC11 <- AUC(stats_CC11$prop_ext, stats_CC11$prop_surv, from = min(min(stats_CC11$prop_ext)), to = max(max(stats_CC11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#CS
+stats_CS4$prop_surv <- (1-stats_CS4$X0L)
+stats_CS4$prop_ext <- stats_CS4$pri_ext/ESall
+stats_CS4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS4)+1, prop_surv = 1, prop_ext = 0), stats_CS4)
+AUC_CS4 <- AUC(stats_CS4$prop_ext, stats_CS4$prop_surv, from = min(min(stats_CS4$prop_ext)), to = max(max(stats_CS4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS5$prop_surv <- (1-stats_CS5$X0L)
+stats_CS5$prop_ext <- stats_CS5$pri_ext/ESall
+stats_CS5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS5)+1, prop_surv = 1, prop_ext = 0), stats_CS5)
+AUC_CS5 <- AUC(stats_CS5$prop_ext, stats_CS5$prop_surv, from = min(min(stats_CS5$prop_ext)), to = max(max(stats_CS5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS6$prop_surv <- (1-stats_CS6$X0L)
+stats_CS6$prop_ext <- stats_CS6$pri_ext/length(supporters)
+stats_CS6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS6)+1, prop_surv = 1, prop_ext = 0), stats_CS6)
+AUC_CS6 <- AUC(stats_CS6$prop_ext, stats_CS6$prop_surv, from = min(min(stats_CS6$prop_ext)), to = max(max(stats_CS6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS7$prop_surv <- (1-stats_CS7$X0L)
+stats_CS7$prop_ext <- stats_CS7$pri_ext/length(supporters)
+stats_CS7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS7)+1, prop_surv = 1, prop_ext = 0), stats_CS7)
+AUC_CS7 <- AUC(stats_CS7$prop_ext, stats_CS7$prop_surv, from = min(min(stats_CS7$prop_ext)), to = max(max(stats_CS7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS8$prop_surv <- (1-stats_CS8$X0L)
+stats_CS8$prop_ext <- stats_CS8$pri_ext/length(supporters)
+stats_CS8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS8)+1, prop_surv = 1, prop_ext = 0), stats_CS8)
+AUC_CS8 <- AUC(stats_CS8$prop_ext, stats_CS8$prop_surv, from = min(min(stats_CS8$prop_ext)), to = max(max(stats_CS8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS9$prop_surv <- (1-stats_CS9$X0L)
+stats_CS9$prop_ext <- stats_CS9$pri_ext/length(providers)
+stats_CS9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS9)+1, prop_surv = 1, prop_ext = 0), stats_CS9)
+AUC_CS9 <- AUC(stats_CS9$prop_ext, stats_CS9$prop_surv, from = min(min(stats_CS9$prop_ext)), to = max(max(stats_CS9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS10$prop_surv <- (1-stats_CS10$X0L)
+stats_CS10$prop_ext <- stats_CS10$pri_ext/ESall
+stats_CS10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS10)+1, prop_surv = 1, prop_ext = 0), stats_CS10)
+AUC_CS10 <- AUC(stats_CS10$prop_ext, stats_CS10$prop_surv, from = min(min(stats_CS10$prop_ext)), to = max(max(stats_CS10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_CS11$prop_surv <- (1-stats_CS11$X0L)
+stats_CS11$prop_ext <- stats_CS11$pri_ext/ESall
+stats_CS11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_CS11)+1, prop_surv = 1, prop_ext = 0), stats_CS11)
+AUC_CS11 <- AUC(stats_CS11$prop_ext, stats_CS11$prop_surv, from = min(min(stats_CS11$prop_ext)), to = max(max(stats_CS11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#ID
+stats_ID4$prop_surv <- (1-stats_ID4$X0L)
+stats_ID4$prop_ext <- stats_ID4$pri_ext/ESall
+stats_ID4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID4)+1, prop_surv = 1, prop_ext = 0), stats_ID4)
+AUC_ID4 <- AUC(stats_ID4$prop_ext, stats_ID4$prop_surv, from = min(min(stats_ID4$prop_ext)), to = max(max(stats_ID4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID5$prop_surv <- (1-stats_ID5$X0L)
+stats_ID5$prop_ext <- stats_ID5$pri_ext/ESall
+stats_ID5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID5)+1, prop_surv = 1, prop_ext = 0), stats_ID5)
+AUC_ID5 <- AUC(stats_ID5$prop_ext, stats_ID5$prop_surv, from = min(min(stats_ID5$prop_ext)), to = max(max(stats_ID5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID6$prop_surv <- (1-stats_ID6$X0L)
+stats_ID6$prop_ext <- stats_ID6$pri_ext/length(supporters)
+stats_ID6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID6)+1, prop_surv = 1, prop_ext = 0), stats_ID3)
+AUC_ID6 <- AUC(stats_ID6$prop_ext, stats_ID6$prop_surv, from = min(min(stats_ID6$prop_ext)), to = max(max(stats_ID6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID7$prop_surv <- (1-stats_ID7$X0L)
+stats_ID7$prop_ext <- stats_ID7$pri_ext/length(supporters)
+stats_ID7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID7)+1, prop_surv = 1, prop_ext = 0), stats_ID7)
+AUC_ID7 <- AUC(stats_ID7$prop_ext, stats_ID7$prop_surv, from = min(min(stats_ID7$prop_ext)), to = max(max(stats_ID7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID8$prop_surv <- (1-stats_ID8$X0L)
+stats_ID8$prop_ext <- stats_ID8$pri_ext/length(supporters)
+stats_ID8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID8)+1, prop_surv = 1, prop_ext = 0), stats_ID8)
+AUC_ID8 <- AUC(stats_ID8$prop_ext, stats_ID8$prop_surv, from = min(min(stats_ID8$prop_ext)), to = max(max(stats_ID8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID9$prop_surv <- (1-stats_ID9$X0L)
+stats_ID9$prop_ext <- stats_ID9$pri_ext/length(providers)
+stats_ID9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID9)+1, prop_surv = 1, prop_ext = 0), stats_ID9)
+AUC_ID9 <- AUC(stats_ID9$prop_ext, stats_ID6$prop_surv, from = min(min(stats_ID9$prop_ext)), to = max(max(stats_ID9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID10$prop_surv <- (1-stats_ID10$X0L)
+stats_ID10$prop_ext <- stats_ID10$pri_ext/ESall
+stats_ID10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID10)+1, prop_surv = 1, prop_ext = 0), stats_ID10)
+AUC_ID10 <- AUC(stats_ID10$prop_ext, stats_ID10$prop_surv, from = min(min(stats_ID10$prop_ext)), to = max(max(stats_ID10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_ID11$prop_surv <- (1-stats_ID11$X0L)
+stats_ID11$prop_ext <- stats_ID11$pri_ext/ESall
+stats_ID11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ID11)+1, prop_surv = 1, prop_ext = 0), stats_ID11)
+AUC_ID11 <- AUC(stats_ID11$prop_ext, stats_ID11$prop_surv, from = min(min(stats_ID11$prop_ext)), to = max(max(stats_ID11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para EE
+stats_EE4$prop_surv <- (1-stats_EE4$X0L)
+stats_EE4$prop_ext <- stats_EE4$pri_ext/ESall
+stats_EE4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE4)+1, prop_surv = 1, prop_ext = 0), stats_EE4)
+AUC_EE4 <- AUC(stats_EE4$prop_ext, stats_EE4$prop_surv, from = min(min(stats_EE4$prop_ext)), to = max(max(stats_EE4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE5$prop_surv <- (1-stats_EE5$X0L)
+stats_EE5$prop_ext <- stats_EE5$pri_ext/ESall
+stats_EE5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE5)+1, prop_surv = 1, prop_ext = 0), stats_EE5)
+AUC_EE5 <- AUC(stats_EE5$prop_ext, stats_EE5$prop_surv, from = min(min(stats_EE5$prop_ext)), to = max(max(stats_EE5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE6$prop_surv <- (1-stats_EE6$X0L)
+stats_EE6$prop_ext <- stats_EE6$pri_ext/length(supporters)
+stats_EE6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE6)+1, prop_surv = 1, prop_ext = 0), stats_EE6)
+AUC_EE6 <- AUC(stats_EE6$prop_ext, stats_EE6$prop_surv, from = min(min(stats_EE6$prop_ext)), to = max(max(stats_EE6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE7$prop_surv <- (1-stats_EE7$X0L)
+stats_EE7$prop_ext <- stats_EE7$pri_ext/length(supporters)
+stats_EE7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE7)+1, prop_surv = 1, prop_ext = 0), stats_EE7)
+AUC_EE7 <- AUC(stats_EE7$prop_ext, stats_EE7$prop_surv, from = min(min(stats_EE7$prop_ext)), to = max(max(stats_EE7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE8$prop_surv <- (1-stats_EE8$X0L)
+stats_EE8$prop_ext <- stats_EE8$pri_ext/length(supporters)
+stats_EE8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE8)+1, prop_surv = 1, prop_ext = 0), stats_EE8)
+AUC_EE8 <- AUC(stats_EE8$prop_ext, stats_EE8$prop_surv, from = min(min(stats_EE8$prop_ext)), to = max(max(stats_EE8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE9$prop_surv <- (1-stats_EE9$X0L)
+stats_EE9$prop_ext <- stats_EE9$pri_ext/length(providers)
+stats_EE9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE9)+1, prop_surv = 1, prop_ext = 0), stats_EE9)
+AUC_EE9 <- AUC(stats_EE9$prop_ext, stats_EE9$prop_surv, from = min(min(stats_EE9$prop_ext)), to = max(max(stats_EE9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE10$prop_surv <- (1-stats_EE10$X0L)
+stats_EE10$prop_ext <- stats_EE10$pri_ext/ESall
+stats_EE10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE10)+1, prop_surv = 1, prop_ext = 0), stats_EE10)
+AUC_EE10 <- AUC(stats_EE10$prop_ext, stats_EE10$prop_surv, from = min(min(stats_EE10$prop_ext)), to = max(max(stats_EE10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_EE11$prop_surv <- (1-stats_EE11$X0L)
+stats_EE11$prop_ext <- stats_EE11$pri_ext/ESall
+stats_EE11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_EE11)+1, prop_surv = 1, prop_ext = 0), stats_EE11)
+AUC_EE11 <- AUC(stats_EE11$prop_ext, stats_EE11$prop_surv, from = min(min(stats_EE11$prop_ext)), to = max(max(stats_EE11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+```
+
+```{r}
+#mean robustness calculation for each ES
+rbmean_FI <- sum(AUC_FI4, AUC_FI5, AUC_FI6, AUC_FI7, AUC_FI8, AUC_FI9, AUC_FI10, AUC_FI11)/8
+rbmean_RM <- sum(AUC_RM4, AUC_RM5, AUC_RM6, AUC_RM7, AUC_RM8, AUC_RM9, AUC_RM10, AUC_RM11)/8
+rbmean_BD <- sum(AUC_BD4, AUC_BD5, AUC_BD6, AUC_BD7, AUC_BD8, AUC_BD9, AUC_BD10, AUC_BD11)/8
+rbmean_BP <- sum(AUC_BP4, AUC_BP5, AUC_BP6, AUC_BP7, AUC_BP8, AUC_BP9, AUC_BP10, AUC_BP11)/8
+rbmean_CC <- sum(AUC_CC4, AUC_CC5, AUC_CC6, AUC_CC7, AUC_CC8, AUC_CC9, AUC_CC10, AUC_CC11)/8
+rbmean_CS <- sum(AUC_CS4, AUC_CS5, AUC_CS6, AUC_CS7, AUC_CS8, AUC_CS9, AUC_CS10, AUC_CS11)/8
+rbmean_ID <- sum(AUC_ID4, AUC_ID5, AUC_ID6, AUC_ID7, AUC_ID8, AUC_ID9, AUC_ID10, AUC_ID11)/8
+rbmean_EE <- sum(AUC_EE4, AUC_EE5, AUC_EE6, AUC_EE7, AUC_EE8, AUC_EE9, AUC_EE10, AUC_EE11)/8
+rbmean <- c(rbmean_FI, rbmean_RM, rbmean_BD, rbmean_BP, rbmean_CC, rbmean_CS, rbmean_ID, rbmean_EE)
+
+#aggregation of all robustness values
+rbmean <- as.numeric(rbmean)
+rb4 <- c(AUC_FI4, AUC_RM4, AUC_BD4, AUC_BP4, AUC_CC4, AUC_CS4, AUC_ID4, AUC_EE4)
+rb5 <- c(AUC_FI5, AUC_RM5, AUC_BD5, AUC_BP5, AUC_CC5, AUC_CS5, AUC_ID5, AUC_EE5)
+rb6 <- c(AUC_FI6, AUC_RM6, AUC_BD6, AUC_BP6, AUC_CC6, AUC_CS6, AUC_ID6, AUC_EE6)
+rb7 <- c(AUC_FI7, AUC_RM7, AUC_BD7, AUC_BP7, AUC_CC7, AUC_CS7, AUC_ID7, AUC_EE7)
+rb8 <- c(AUC_FI8, AUC_RM8, AUC_BD8, AUC_BP8, AUC_CC8, AUC_CS8, AUC_ID8, AUC_EE8)
+rb6 <- c(AUC_FI9, AUC_RM9, AUC_BD9, AUC_BP9, AUC_CC9, AUC_CS9, AUC_ID9, AUC_EE9)
+rb7 <- c(AUC_FI10, AUC_RM10, AUC_BD10, AUC_BP10, AUC_CC10, AUC_CS10, AUC_ID10, AUC_EE10)
+r8 <- c(AUC_FI11, AUC_RM11, AUC_BD11, AUC_BP11, AUC_CC11, AUC_CS11, AUC_ID11, AUC_EE11)
+rb4 <- as.numeric(rb4)
+rb5 <- as.numeric(rb5)
+rb6 <- as.numeric(rb6)
+rb7 <- as.numeric(rb7)
+rb8 <- as.numeric(rb8)
+rb9 <- as.numeric(rb9)
+rb10 <- as.numeric(rb10)
+rb11 <- as.numeric(rb11)
+
+#topological stats calculations for all ES
+ES <- c("FI", "RM", "BD", "BP", "CC", "CS", "ID", "EE")
+ESnet <- graph.data.frame(links, directed = T, vertices = nodes)
+ESmat <- as_adjacency_matrix(ESnet, sparse = FALSE, attr = NULL)
+degree <- degree(ESnet)
+nodes$degree <- degree
+tl <- TrophInd(Tij = t(ESmat))
+nodes$tl <- tl$TL
+top <- calc_topological_roles(ESnet)
+top <- top[match(c(386, 385, 380, 381, 382, 387, 384, 383), top$node), ]
+am <- top$among_module_conn
+wm <- top$within_module_degree
+
+#dataframe creation
+robustness <- subset(nodes, nodes$vertextype > 30)
+robustness <- robustness[match(ES, robustness$Species), ]
+robustness <- robustness[,c(1,7,8)]
+robustness <- cbind(robustness, am, wm, rbmean, rb4, rb5, rb6, rb7, rb8, rb9, rb10, rb11)
+
+#correlation calculations
+#avg robustness
+cor.test(robustness$rbmean, robustness$degree, method = "spearman")
+lm(robustness$rbmean ~ robustness$degree)
+cor.test(robustness$rbmean, robustness$tl, method = "spearman")
+cor.test(robustness$rbmean, robustness$wm, method = "spearman")
+cor.test(robustness$rbmean, robustness$am, method = "spearman")
+
+#seq 4
+cor.test(robustness$rb4, robustness$degree, method = "spearman")
+cor.test(robustness$rb4, robustness$tl, method = "spearman")
+cor.test(robustness$rb4, robustness$am, method = "spearman")
+cor.test(robustness$rb4, robustness$wm, method = "spearman")
+
+#seq 5
+cor.test(robustness$rb5, robustness$degree, method = "spearman")
+cor.test(robustness$rb5, robustness$tl, method = "spearman")
+cor.test(robustness$rb5, robustness$am, method = "spearman")
+cor.test(robustness$rb5, robustness$wm, method = "spearman")
+
+#seq 6
+cor.test(robustness$rb6, robustness$degree, method = "spearman")
+cor.test(robustness$rb6, robustness$tl, method = "spearman")
+cor.test(robustness$rb6, robustness$am, method = "spearman")
+cor.test(robustness$rb6, robustness$wm, method = "spearman")
+
+#seq 7
+cor.test(robustness$rb7, robustness$degree, method = "spearman")
+cor.test(robustness$rb7, robustness$tl, method = "spearman")
+cor.test(robustness$rb7, robustness$am, method = "spearman")
+cor.test(robustness$rb7, robustness$wm, method = "spearman")
+
+#seq 8
+cor.test(robustness$rb8, robustness$degree, method = "spearman")
+cor.test(robustness$rb8, robustness$tl, method = "spearman")
+cor.test(robustness$rb8, robustness$am, method = "spearman")
+cor.test(robustness$rb8, robustness$wm, method = "spearman")
+
+#seq 9
+cor.test(robustness$rb9, robustness$degree, method = "spearman")
+cor.test(robustness$rb9, robustness$tl, method = "spearman")
+cor.test(robustness$rb9, robustness$am, method = "spearman")
+cor.test(robustness$rb9, robustness$wm, method = "spearman")
+
+#seq 10
+cor.test(robustness$rb10, robustness$degree, method = "spearman")
+cor.test(robustness$rb10, robustness$tl, method = "spearman")
+cor.test(robustness$rb10, robustness$am, method = "spearman")
+cor.test(robustness$rb10, robustness$wm, method = "spearman")
+
+#seq 11
+cor.test(robustness$rb11, robustness$degree, method = "spearman")
+cor.test(robustness$rb11, robustness$tl, method = "spearman")
+cor.test(robustness$rb11, robustness$am, method = "spearman")
+cor.test(robustness$rb11, robustness$wm, method = "spearman")
+```
+
+```{r}
+#graphic creation
+FI <- robustness[c(1),]
+RM <- robustness[c(2),]
+BD <- robustness[c(3),]
+BP <- robustness[c(4),]
+CC <- robustness[c(5),]
+CS <- robustness[c(6),]
+ID <- robustness[c(7),]
+EE <- robustness[c(8),]
+mean <- robustness[,c(6)]
+AUCs <- c(FI[7:14], RM[7:14], BD[7:14], BP[7:14], CC[7:14], CS[7:14], ID[7:14], EE[7:14], mean)
+ESlabel <- c(1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,1,2,3,4,5,6,7,8)
+statlabel <- c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0)
+EScor <- cbind(ESlabel, AUCs, statlabel)
+EScor <- as.data.frame(EScor)
+EScor$AUCs <- as.numeric(EScor$AUCs)
+EScor$ESlabel <- as.character(EScor$ESlabel)
+EScor$statlabel <- as.character(EScor$statlabel)
+ggplot(EScor, aes(x=AUCs, y=ESlabel, color = statlabel)) + scale_color_manual(values=c("darkcyan", "black")) + geom_point(size=3) + theme_bw() + ylab(NULL) + xlab("Robustness") + theme(axis.text=element_text(size=12), axis.title=element_text(size=14))
+
+#topological stats calc
+ESmat <- as_adjacency_matrix(ESnet, sparse = FALSE, attr = NULL)
+ESdegree <- degree(ESnet)
+EStl <- TrophInd(Tij = t(ESmat))
+nodes$ESdegree <- ESdegree
+nodes$EStl <- EStl
+ESmetrics <- subset(nodes, nodes$vertextype > 30)
+ESmetrics <- ESmetrics[match(ES, ESmetrics$Species), ]
+ESmetrics <- cbind(ESmetrics[,c(7,8)], am, wm, ES, c(1,2,3,4,5,6,7,8))
+
+#topological stats graphics
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=degree, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Degree")
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=tl, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Trophic level")
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=am, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Among-module connection")
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=wm, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Within-module connection")
+
+```
