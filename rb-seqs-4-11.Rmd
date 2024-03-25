@@ -94,14 +94,15 @@ seq7 <- as.vector(seq7[,1])
 seq7ES <- c(seq7, ES) 
 
 #seq 8: randomly ordered ESPs
-seq8 <- sample(supporters, length(supporters), replace = FALSE)
-seq8 <- c(seq8, other, providers)
+seq8 <- sample(providers, length(providers), replace = FALSE)
+seq8 <- c(seq8, supporters, other) 
 #ES version
-seq8ES <- c(seq5, ES)
+seq8ES <- c(seq8, ES)
+
 
 #seq 9: randomly ordered ESSs
-seq9 <- sample(providers, length(providers), replace = FALSE)
-seq9 <- c(seq9, supporters, other) 
+seq9 <- sample(supporters, length(supporters), replace = FALSE)
+seq9 <- c(seq9, other, providers)
 #ES version
 seq9ES <- c(seq9, ES)
 
