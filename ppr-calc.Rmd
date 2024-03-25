@@ -1,0 +1,130 @@
+---
+title: "personalized page ranks"
+author: "Mitch Porter"
+date: "2024-03-24"
+output: html_document
+---
+
+```{r}
+#the following code is directly from Keyes, et al, 2021 https://github.com/aike2863/food-web-and-ecosystem-service-robustness/tree/v1.0.0
+
+#load packages
+library(tidyverse)
+library(igraph)
+
+#load data
+nodes <- read.csv("./nodes.csv")
+links <- read.csv("./links.csv")
+
+#flip edges
+links_flip <- links[,c(2,1,3)]
+net <- graph.data.frame(links_flip, directed = T, vertices = nodes)
+
+#run personalized pagerank for each individual ecosystem service
+#FI
+
+FI <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(nodes[nodes$vertextype > 30,])), 1,0,0,0,0,0,0,0))$vector, vertextype=nodes$vertextype)
+FI_SPP <- FI[!(FI$vertextype > 30),]
+FI_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="1", links$Prey,NA))
+FI_direct <- c(na.omit(FI_direct))
+FI_support <- FI_SPP[!(FI_SPP$SpeciesID %in% FI_direct$SpeciesID),]
+attach(FI_support)
+FI_support <- FI_support[order(-prob),] #ordered from high to low prob
+detach(FI_support)
+write.csv(FI_support,"./Indirect_FI.csv")
+
+#RM
+
+RM <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,1,0,0,0,0,0,0))$vector, vertextype=nodes$vertextype)
+RM_SPP <- RM[!(RM$vertextype > 30),]
+RM_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="2", links$Prey,NA))
+RM_direct <- c(na.omit(RM_direct))
+RM_support <- RM_SPP[!(RM_SPP$SpeciesID %in% RM_direct$SpeciesID),]
+attach(RM_support)
+RM_support <- RM_support[order(-prob),] #ordered from high to low prob
+detach(RM_support)
+write.csv(RM_support,"./Indirect_RM.csv")
+
+#BD
+
+BD <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,0,1,0,0,0,0,0))$vector, vertextype=nodes$vertextype)
+BD_SPP <- BD[!(BD$vertextype > 30),]
+BD_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="3", links$Prey,NA))
+BD_direct <- c(na.omit(BD_direct))
+BD_support <- BD_SPP[!(BD_SPP$SpeciesID %in% BD_direct$SpeciesID),]
+attach(BD_support)
+BD_support <- BD_support[order(-prob),] #ordered from high to low prob
+detach(BD_support)
+write.csv(BD_support,"./Indirect_BD.csv")
+
+#BP
+
+BP <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,0,0,1,0,0,0,0))$vector, vertextype=nodes$vertextype)
+BP_SPP <- BP[!(BP$vertextype > 30),]
+BP_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="4", links$Prey,NA))
+BP_direct <- c(na.omit(BP_direct))
+BP_support <- BP_SPP[!(BP_SPP$SpeciesID %in% BP_direct$SpeciesID),]
+attach(BP_support)
+BP_support <- BP_support[order(-prob),] #ordered from high to low prob
+detach(BP_support)
+write.csv(BP_support,"./Indirect_BP.csv")
+
+#CC
+
+CC <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,0,0,0,1,0,0,0))$vector, vertextype=nodes$vertextype)
+CC_SPP <- CC[!(CC$vertextype > 30),]
+CC_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="5", links$Prey,NA))
+CC_direct <- c(na.omit(CC_direct))
+CC_support <- CC_SPP[!(CC_SPP$SpeciesID %in% CC_direct$SpeciesID),]
+attach(CC_support)
+CC_support <- CC_support[order(-prob),] #ordered from high to low prob
+detach(CC_support)
+write.csv(CC_support,"./Indirect_CC.csv")
+
+#CS
+
+CS <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,0,0,0,0,1,0,0))$vector, vertextype=nodes$vertextype)
+CS_SPP <- CS[!(CS$vertextype > 30),]
+CS_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="6", links$Prey,NA))
+CS_direct <- c(na.omit(CS_direct))
+CS_support <- CS_SPP[!(CS_SPP$SpeciesID %in% CS_direct$SpeciesID),]
+attach(CS_support)
+CS_support <- CS_support[order(-prob),] #ordered from high to low prob
+detach(CS_support)
+write.csv(CS_support,"./Indirect_CS.csv")
+
+#ID
+
+ID <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,0,0,0,0,1,0,0))$vector, vertextype=nodes$vertextype)
+ID_SPP <- ID[!(ID$vertextype > 30),]
+ID_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="7", links$Prey,NA))
+ID_direct <- c(na.omit(ID_direct))
+ID_support <- ID_SPP[!(ID_SPP$SpeciesID %in% ID_direct$SpeciesID),]
+attach(ID_support)
+ID_support <- ID_support[order(-prob),] #ordered from high to low prob
+detach(ID_support)
+write.csv(ID_support,"./Indirect_ID.csv")
+
+#EE
+
+EE <- data.frame(SpeciesID=nodes$Species, prob=page_rank(graph=net, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(nodes)-nrow(nodes[nodes$vertextype > 30,])), 0,0,0,0,0,0,0,1))$vector, vertextype=nodes$vertextype)
+EE_SPP <- EE[!(EE$vertextype > 30),]
+EE_direct <- data.frame(SpeciesID = ifelse(links$edgetype=="8", links$Prey,NA))
+EE_direct <- c(na.omit(EE_direct))
+EE_support <- EE_SPP[!(EE_SPP$SpeciesID %in% EE_direct$SpeciesID),]
+attach(EE_support)
+EE_support <- EE_support[order(-prob),] #ordered from high to low prob
+detach(EE_support)
+write.csv(EE_support,"./Indirect_EE.csv")
+
+#calculating aggregate probability
+
+all_support <- rbind(EE_support,ID_support,CS_support,CC_support,BP_support,BD_support,RM_support,FI_support)
+all_support$SpeciesID <- as.factor(all_support$SpeciesID)
+mean_support <- aggregate(prob ~ SpeciesID, all_support, mean) # calculate mean prob. for each sp.
+
+attach(mean_support)
+mean_support <- mean_support[order(-prob),]
+detach(mean_support)
+
+write.csv(mean_support, "importance.csv")
