@@ -1,0 +1,92 @@
+---
+title: "Integrated trophic web"
+author: "Mitch Porter"
+output: html_document
+date: "2023-11-09"
+---
+
+Work with original trophic web
+```{r setup, include=FALSE}
+#load packages
+library(ggplot2)
+library(tidyverse)
+library(igraph)
+library(multiweb)
+library(NetIndices)
+```
+
+```{r}
+#load data
+links <- read_csv("links.csv")
+nodes <- read_csv("nodes.csv")
+
+#create igraph
+igraph <- graph_from_data_frame(d=links, vertices=nodes, directed=T)
+V(igraph)$label <- NA
+```
+
+```{r}
+net <- graph.data.frame(links, directed = T, vertices = nodes)
+mat <- as_adjacency_matrix(net, sparse = FALSE, attr = NULL)
+tl <- TrophInd(Tij = t(mat))
+nodes$tl = tl
+topo <- cluster_spinglass(igraph)
+igraph <- graph_from_data_frame(d=links, vertices=nodes, directed=T)
+
+plot_troph <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 3, 13, log10(deg/2)*vertexSizeFactor+vertexSizeMin)
+  V(g)$shape <- ifelse(V(g)$vertextype == 3, "square", "circle")
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype > 0, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+      lMat[,1]<- jitter(topo$membership, 1.5)
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 3, "#fe7356", 
+                      ifelse(V(g)$vertextype == 2, "#028b8b", 
+                        ifelse(V(g)$vertextype == 1, "#02cdcd", "#a6a6a6" 
+                             )))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.2, canvas.width = 1000, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.1,
+         edge.curved=0.2, canvas.width = 1000, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_troph(igraph)
+```
