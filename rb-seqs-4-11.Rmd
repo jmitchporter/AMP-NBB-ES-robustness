@@ -15,7 +15,7 @@ library(NetIndices)
 #load data
 nodes <- read.csv("./nodes.csv")
 links <- read.csv("./links.csv")
-SPPlinks <- subset(links, links$edgetype > 1) #remove ES links
+SPPlinks <- subset(links, links$edgetype < 1) #remove ES links
 SPPnodes <- subset(nodes, nodes$vertextype < 3) #remove ES nodes
 importance <- read.csv("importance.csv", header=T)
 ```
