@@ -27,9 +27,9 @@ ESnet <- graph.data.frame(links, directed = T, vertices = nodes)
 
 #create relevant subgroups (ES, ESPs, ESSs)
 all <- as.vector(nodes[,1])
-ES <- subset(nodes, nodes$vertextype == 30)
+ES <- subset(nodes, nodes$vertextype == 3)
 ES <- as.vector(ES[,1])
-providers <- subset(links, links$edgetype > 1)
+providers <- subset(links, links$edgetype == 1)
 providers <- as.vector(providers[,1])
 providers <- unique(providers)
 
