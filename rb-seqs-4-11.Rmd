@@ -15,8 +15,8 @@ library(NetIndices)
 #load data
 nodes <- read.csv("./nodes.csv")
 links <- read.csv("./links.csv")
-SPPlinks <- subset(links, links$edgetype == 0) #remove ES links
-SPPnodes <- subset(nodes, nodes$vertextype < 30) #remove ES nodes
+SPPlinks <- subset(links, links$edgetype > 1) #remove ES links
+SPPnodes <- subset(nodes, nodes$vertextype < 3) #remove ES nodes
 importance <- read.csv("importance.csv", header=T)
 ```
 
@@ -27,9 +27,9 @@ ESnet <- graph.data.frame(links, directed = T, vertices = nodes)
 
 #create relevant subgroups (ES, ESPs, ESSs)
 all <- as.vector(nodes[,1])
-ES <- subset(nodes, nodes$vertextype > 30)
+ES <- subset(nodes, nodes$vertextype == 30)
 ES <- as.vector(ES[,1])
-providers <- subset(links, links$edgetype > 0)
+providers <- subset(links, links$edgetype > 1)
 providers <- as.vector(providers[,1])
 providers <- unique(providers)
 
