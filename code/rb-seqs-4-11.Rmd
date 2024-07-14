@@ -1,0 +1,367 @@
+---
+title: "rb-seqs-4-11"
+author: "Mitch Porter"
+date: "2024-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#load packages
+library(multiweb)
+library(igraph)
+library(tidyverse)
+library(NetIndices)
+
+#load data
+nodes <- read.csv("nodes.csv")
+links <- read.csv("links.csv")
+SPPlinks <- subset(links, links$edgetype == 0) #remove ES links
+SPPnodes <- subset(nodes, nodes$vertextype < 3) #remove ES nodes
+importance <- read.csv("importance.csv", header=T)
+```
+
+```{r}
+#create networks
+net <- graph.data.frame(SPPlinks, directed = T, vertices = nodes)
+ESnet <- graph.data.frame(links, directed = T, vertices = nodes)
+
+#create relevant subgroups (ES, ESPs, ESSs)
+all <- as.vector(nodes[,1])
+ES <- subset(nodes, nodes$vertextype > 2)
+ES <- as.vector(ES[,1])
+providers <- subset(links, links$edgetype == 1)
+providers <- as.vector(providers[,1])
+providers <- unique(providers)
+
+#identify any species with an upwards path to ES (ESS)
+predators <- as.data.frame(cbind(links[,c(2)], 1:nrow(links)))
+prey <- as.data.frame(cbind(links[,c(1)], 1:nrow(links)))
+predatorsES1 <- subset(predators, V1 %in% providers)
+preyES1 <- subset(prey, V2 %in% predatorsES1$V2)
+predatorsES2 <- subset(predators, V1 %in% preyES1$V1)
+preyES2 <- subset(prey, V2 %in% predatorsES2$V2)
+predatorsES3 <- subset(predators, V1 %in% preyES2$V1)
+preyES3 <- subset(prey, V2 %in% predatorsES3$V2)
+predatorsES4 <- subset(predators, V1 %in% preyES3$V1)
+preyES4 <- subset(prey, V2 %in% predatorsES4$V2)
+predatorsES5 <- subset(predators, V1 %in% preyES4$V1)
+preyES5 <- subset(prey, V2 %in% predatorsES5$V2)
+predatorsES6 <- subset(predators, V1 %in% preyES5$V1)
+preyES6 <- subset(prey, V2 %in% predatorsES6$V2)
+supporters <- unique(preyES5$V1)
+supporters <- supporters[! supporters %in% providers]
+
+#isolate all other species
+other <- all[! all %in% supporters]
+other <- other[! other %in% providers]
+other <- other[! other %in% ES]
+
+#identify topological metrics
+mat <- as_adjacency_matrix(net, sparse = FALSE, attr = NULL)
+degree <- degree(net)
+nodes$degree <- degree
+tl <- TrophInd(Tij = t(mat))
+nodes$tl <- tl$TL
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes)
+top <- calc_topological_roles(SPPnet)
+SPPnodes$wm <- top$within_module_degree
+SPPnodes$am <- top$among_module_conn
+
+#create vectors for sequences (one network only and one incl. ES)
+#seq 4: most to least connected
+seq4 <- nodes[order(nodes$degree),]
+seq4 <- as.vector(seq4[,1])
+seq4 <- rev(seq4)
+#ES version
+seq4 <- seq4[! seq4 %in% ES] 
+seq4ES <- c(seq4, ES)
+
+
+#seq 5: least to most connected
+seq5 <- nodes[order(nodes$degree),]
+seq5 <- as.vector(seq5[,1])
+#ES version
+seq5 <- seq5[! seq5 %in% ES]
+seq5ES <- c(seq5, ES)
+
+#seq 6: most to least connected within trophic modules
+seq6 <- SPPnodes[order(SPPnodes$wm, decreasing = TRUE), ] 
+seq6 <- as.vector(seq6[,1])
+#ES version
+seq6ES <- c(seq6, ES) 
+
+#seq 7: most to least connected among trophic modules
+seq7 <- SPPnodes[order(SPPnodes$am, decreasing = TRUE), ] 
+seq7 <- as.vector(seq7[,1])
+#ES version
+seq7ES <- c(seq7, ES) 
+
+#seq 8: randomly ordered ESPs
+seq8 <- sample(providers, length(providers), replace = FALSE)
+seq8 <- c(seq8, supporters, other) 
+#ES version
+seq8ES <- c(seq8, ES)
+
+#seq 9: randomly ordered ESSs
+seq9 <- sample(supporters, length(supporters), replace = FALSE)
+seq9 <- c(seq9, other, providers)
+#ES version
+seq9ES <- c(seq9, ES)
+
+#seq 10: ESSs in increasing order of relevance
+seq10 <- as.vector(importance[,2])
+seq10 <- rev(seq10)
+seq10 <- seq10[! seq10 %in% providers]
+seq10 <- seq10[! seq10 %in% other]
+seq10 <- c(seq10, other, providers)
+#ES version
+seq10ES <- c(seq10, ES)
+
+#seq 11: ESSs in decreasing order of relevance
+seq11<- as.vector(importance[,2])
+seq11 <- seq11[! seq11 %in% providers]
+seq11 <- seq11[! seq11 %in% other]
+seq11 <- c(seq11, other, providers)
+#ES version
+seq11ES <- c(seq11, ES)
+
+#order nodes by sequences
+nodes4 <- nodes[match(seq4, nodes$Species), ]
+nodesES4 <- nodes[match(seq4ES, nodes$Species), ]
+nodes5 <- nodes[match(seq5, nodes$Species), ]
+nodesES5 <- nodes[match(seq5ES, nodes$Species), ]
+nodes6 <- nodes[match(seq6, nodes$Species), ]
+nodesES6 <- nodes[match(seq6ES, nodes$Species), ]
+nodes7 <- nodes[match(seq7, nodes$Species), ]
+nodesES7 <- nodes[match(seq7ES, nodes$Species), ]
+nodes8 <- nodes[match(seq8, nodes$Species), ]
+nodesES8 <- nodes[match(seq8ES, nodes$Species), ]
+nodes9 <- nodes[match(seq9, nodes$Species), ]
+nodesES9 <- nodes[match(seq9ES, nodes$Species), ]
+nodes10 <- nodes[match(seq10, nodes$Species), ]
+nodesES10 <- nodes[match(seq10ES, nodes$Species), ]
+nodes11 <- nodes[match(seq11, nodes$Species), ]
+nodesES11 <- nodes[match(seq11ES, nodes$Species), ]
+
+#create dataframes for each sequence
+df4 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes4) 
+dfES4 <- graph.data.frame(links, directed = T, vertices = nodesES4) 
+df4 <- igraph::simplify(df4, remove.loops = TRUE)
+dfES4 <- igraph::simplify(dfES4, remove.loops = TRUE)
+mat4 <- as_adjacency_matrix(df4, sparse = FALSE, attr = NULL) 
+matES4 <- as_adjacency_matrix(dfES4, sparse = FALSE, attr = NULL) 
+df4 <- as.data.frame(mat4) 
+dfES4 <- as.data.frame(matES4) 
+df5 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes5)
+dfES5 <- graph.data.frame(links, directed = T, vertices = nodesES5) 
+df5 <- igraph::simplify(df5, remove.loops = TRUE)
+dfES5 <- igraph::simplify(dfES5, remove.loops = TRUE)
+mat5 <- as_adjacency_matrix(df5, sparse = FALSE, attr = NULL) 
+matES5 <- as_adjacency_matrix(dfES5, sparse = FALSE, attr = NULL)
+df5 <- as.data.frame(mat5) 
+dfES5 <- as.data.frame(matES5) 
+df6 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes6)
+dfES6 <- graph.data.frame(links, directed = T, vertices = nodesES6)
+df6 <- igraph::simplify(df6, remove.loops = TRUE)
+dfES6 <- igraph::simplify(dfES6, remove.loops = TRUE)
+mat6 <- as_adjacency_matrix(df6, sparse = FALSE, attr = NULL) 
+matES6 <- as_adjacency_matrix(dfES6, sparse = FALSE, attr = NULL) 
+df6 <- as.data.frame(mat6) 
+dfES6 <- as.data.frame(matES6)
+df7 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes7) 
+dfES7 <- graph.data.frame(links, directed = T, vertices = nodesES7) 
+df7 <- igraph::simplify(df7, remove.loops = TRUE)
+dfES7 <- igraph::simplify(dfES7, remove.loops = TRUE)
+mat7 <- as_adjacency_matrix(df7, sparse = FALSE, attr = NULL) 
+matES7 <- as_adjacency_matrix(dfES7, sparse = FALSE, attr = NULL) 
+df7 <- as.data.frame(mat7) 
+dfES7 <- as.data.frame(matES7) 
+df8 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes8) 
+dfES8 <- graph.data.frame(links, directed = T, vertices = nodesES8)
+df8 <- igraph::simplify(df8, remove.loops = TRUE)
+dfES8 <- igraph::simplify(dfES8, remove.loops = TRUE)
+mat8 <- as_adjacency_matrix(df8, sparse = FALSE, attr = NULL) 
+matES8 <- as_adjacency_matrix(dfES8, sparse = FALSE, attr = NULL)
+df8 <- as.data.frame(mat8) 
+dfES8 <- as.data.frame(matES8) 
+df9 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes9) 
+dfES9 <- graph.data.frame(links, directed = T, vertices = nodesES9) 
+df9 <- igraph::simplify(df9, remove.loops = TRUE)
+dfES9 <- igraph::simplify(dfES9, remove.loops = TRUE)
+mat9 <- as_adjacency_matrix(df9, sparse = FALSE, attr = NULL) 
+matES9 <- as_adjacency_matrix(dfES9, sparse = FALSE, attr = NULL) 
+df9 <- as.data.frame(mat9) 
+dfES9 <- as.data.frame(matES9) 
+df10 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes10) 
+dfES10 <- graph.data.frame(links, directed = T, vertices = nodesES10) 
+df10 <- igraph::simplify(df10, remove.loops = TRUE)
+dfES10 <- igraph::simplify(dfES10, remove.loops = TRUE)
+mat10 <- as_adjacency_matrix(df10, sparse = FALSE, attr = NULL) 
+matES10 <- as_adjacency_matrix(dfES10, sparse = FALSE, attr = NULL) 
+df10 <- as.data.frame(mat10) 
+dfES10 <- as.data.frame(matES10) 
+df11 <- graph.data.frame(SPPlinks, directed = T, vertices = nodes11) 
+dfES11 <- graph.data.frame(links, directed = T, vertices = nodesES11) 
+df11 <- igraph::simplify(df11, remove.loops = TRUE)
+dfES11 <- igraph::simplify(dfES11, remove.loops = TRUE)
+mat11 <- as_adjacency_matrix(df11, sparse = FALSE, attr = NULL) 
+matES11 <- as_adjacency_matrix(dfES11, sparse = FALSE, attr = NULL) 
+df11 <- as.data.frame(mat11) 
+dfES11 <- as.data.frame(matES11) 
+
+```
+
+```{r}
+#prepare for sequences
+#rotate the active network as necessary
+red <- df10 #replace final digit for each sequence...
+
+#adapted from Salinas et al. (2016)
+producers <- data.frame(SpeciesID = nodes$Species, InDegree = igraph::degree(ESnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+N <-length(producers)
+Net<-list()
+S <- length(red)
+thresh<- 0
+NumPrey <-rep(0,S)
+vectorthresh <- as.data.frame(NumPrey,row.names=names(red))
+for (b in 1:S) {
+    vectorthresh[b,1] <- sum(red[,b])}
+vectorthresh <- (vectorthresh*thresh)
+vectorthresh <- as.vector(vectorthresh[,1])
+Red <- list()
+A <- rbind(red,vectorthresh)
+
+#run simulations
+for (x in 1:S){
+    if(length(A)>1 & sum(A)!=0){ 
+      B <- A[-1,]
+      A <- B[,-1]
+      repeat {
+        if (length(A) > 1){
+          a <- vector("integer",0)
+          for (l in 1:length(A)) {
+            z <- vector("logical",0)
+            for (k in 1:N) {z <- c(z, names(A)[l] == producers[k])}
+          if ((sum((A[-(length(A)+1),])[,l]) <= A[(length(A)+1),l]) & !any(z)){
+            a <- c(a,l)}}
+        if (length(a)>0){
+          A <- A[-a,]
+          A <- A[,-a]
+          } else {
+            break}}}
+      m<-A[-(length(A)+1),]
+      Red[[x]] <-m
+      }} 
+```
+
+```{r}
+#prepare for ES sequences
+#rotate the active network as necessary
+red <- dfES10 #replace final digit for each sequence...
+
+#adapted from Salinas et al. (2016)
+producers <- data.frame(SpeciesID = nodes$Species, InDegree = igraph::degree(ESnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+N <-length(producers)
+Net<-list()
+S <- length(red)
+thresh<- 0
+NumPrey <-rep(0,S)
+vectorthresh <- as.data.frame(NumPrey,row.names=names(red))
+for (b in 1:S) {
+    vectorthresh[b,1] <- sum(red[,b])}
+vectorthresh <- (vectorthresh*thresh)
+vectorthresh <- as.vector(vectorthresh[,1])
+RedES <- list()
+A <- rbind(red,vectorthresh)
+
+#run simulations
+for (x in 1:S){
+    if(length(A)>1 & sum(A)!=0){ 
+      B <- A[-1,]
+      A <- B[,-1]
+      repeat {
+        if (length(A) > 1){
+          a <- vector("integer",0)
+          for (l in 1:length(A)) {
+            z <- vector("logical",0)
+            for (k in 1:N) {z <- c(z, names(A)[l] == producers[k])}
+          if ((sum((A[-(length(A)+1),])[,l]) <= A[(length(A)+1),l]) & !any(z)){
+            a <- c(a,l)}}
+        if (length(a)>0){
+          A <- A[-a,]
+          A <- A[,-a]
+          } else {
+            break}}}
+      m<-A[-(length(A)+1),]
+      RedES[[x]] <-m
+      }} 
+```
+
+```{r}
+#statistical calculations
+
+net_spp<- data.frame()
+for (i in 1:length(Red)){
+  count<-(count(Red[[i]]))
+  net_spp <- rbind(net_spp, count)
+  }
+
+net_spp$pri_ext <- 1:nrow(net_spp)
+net_spp$sec_ext <- (379 - (net_spp$pri_ext) - net_spp$n)
+
+net_ES<- data.frame()
+for (i in 1:length(RedES)){
+  species <- as.data.frame(RedES[[i]])
+  species <- names(species)
+  species_diff <- intersect(ES,species)
+  ES_lost <- (length(ES)-length(species_diff))
+  net_ES <- rbind(net_ES, ES_lost)
+}
+
+net_ES$pri_ext <- 1:nrow(net_ES)
+num <- count(net_ES)
+num <- as.integer(num)
+net_ES$n <- num - net_ES$pri_ext
+
+#rotate as necessary
+#while it would be preferable to cut each dataframe within at network collapse #within the simulation code, here everything is cut by hand
+
+#net4 <- Red
+#net4_ES <- RedES
+#stats_spp4 <- net_spp
+#stats_ES4 <- top_n(net_ES, nrow(stats_spp4), n)
+#net5 <- Red
+#net5_ES <- RedES
+#stats_spp5 <- net_spp
+#stats_ES5 <- top_n(net_ES, nrow(stats_spp5), n)
+#net6 <- Red
+#net6_ES <- RedES
+#stats_spp6 <- net_spp
+#stats_ES6 <- top_n(net_ES, nrow(stats_spp6), n)
+#net7 <- Red
+#net7_ES <- RedES
+#stats_spp7 <- net_spp
+#stats_ES7 <- top_n(net_ES, nrow(stats_spp7), n)
+#net8 <- Red
+#net8_ES <- RedES
+#stats_spp8 <- top_n(net_spp, 81, n)
+#stats_ES8 <- top_n(net_ES, nrow(stats_spp8), n)
+#net9 <- Red
+#net9_ES <- RedES
+#stats_spp9 <- top_n(net_spp, 127, n)
+#stats_ES9 <- top_n(net_ES, nrow(stats_spp9), n)
+net10 <- Red
+net10_ES <- RedES
+stats_spp10 <- top_n(net_spp, 158, n)
+stats_ES10 <- top_n(net_ES, nrow(stats_spp10), n)
+#net11 <- Red
+#net11_ES <- RedES
+#stats_spp11 <- top_n(net_spp, 115, n)
+#stats_ES11 <- top_n(net_ES, nrow(stats_spp11), n)
+```
+
+```{r}
+save(net4, net4_ES, stats_spp4, stats_ES4, net5, net5_ES, stats_spp5, stats_ES5, net6, net6_ES, stats_spp6, stats_ES6, net7, net7_ES, stats_spp7, stats_ES7, net8, net8_ES, stats_spp8, stats_ES8, net9, net9_ES, stats_spp9, stats_ES9, net10, net10_ES, stats_spp10, stats_ES10, net11, net11_ES, stats_spp11, stats_ES11, all, supporters, providers, ES, other, file = "./seq4-11.RData")
+```

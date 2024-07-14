@@ -1,0 +1,307 @@
+---
+title: "rb-calc"
+author: "Mitch Porter"
+date: "2024-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#load packages
+library(igraph)
+library(tidyverse)
+library(multiweb)
+library(DescTools)
+library(ggplot2)
+
+#load data
+load("./seq1-3.RData")
+load("./seq4-11.RData")
+nodes <- read.csv("./nodes.csv")
+links <- read.csv("./links.csv")
+```
+
+```{r}
+#species-specific network
+SPPlinks <- subset(links, links$edgetype == 0) #remove ES links
+SPPnodes <- subset(nodes, nodes$vertextype < 3) #remove ES nodes
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes) 
+
+#rb calculations
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(nodes, nodes$vertextype > 2)
+ES <- as.vector(ES[,1])
+all <- as.vector(SPPnodes[,1])
+ESall <- length(all) + length(ES)
+susc <- length(all)-basal
+
+#for each network sequence
+stats_spp4$prop_surv <- (susc - stats_spp4$sec_ext)/susc
+stats_spp4$prop_ext <- stats_spp4$pri_ext/length(all)
+stats_spp4 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp4)
+AUC_spp4 <- AUC(stats_spp4$prop_ext, stats_spp4$prop_surv, from = min(min(stats_spp4$prop_ext)), to = max(max(stats_spp4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp5$prop_surv <- (susc-stats_spp5$sec_ext)/susc
+stats_spp5$prop_ext <- stats_spp5$pri_ext/length(all)
+stats_spp5 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp5)
+AUC_spp5 <- AUC(stats_spp5$prop_ext, stats_spp5$prop_surv, from = min(min(stats_spp5$prop_ext)), to = max(max(stats_spp5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp6$prop_surv <- (susc-stats_spp6$sec_ext)/susc
+stats_spp6$prop_ext <- stats_spp6$pri_ext/length(all)
+stats_spp6 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp6)
+AUC_spp6 <- AUC(stats_spp6$prop_ext, stats_spp6$prop_surv, from = min(min(stats_spp6$prop_ext)), to = max(max(stats_spp6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp7$prop_surv <- (susc-stats_spp7$sec_ext)/susc
+stats_spp7$prop_ext <- stats_spp7$pri_ext/length(all)
+stats_spp7 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp7)
+AUC_spp7 <- AUC(stats_spp7$prop_ext, stats_spp7$prop_surv, from = min(min(stats_spp7$prop_ext)), to = max(max(stats_spp7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp8$prop_surv <- (susc-stats_spp8$sec_ext)/susc
+stats_spp8$prop_ext <- stats_spp8$pri_ext/length(providers)
+stats_spp8 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp8)
+AUC_spp8 <- AUC(stats_spp8$prop_ext, stats_spp8$prop_surv, from = min(min(stats_spp8$prop_ext)), to = max(max(stats_spp8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp9$prop_surv <- (susc-stats_spp9$sec_ext)/susc
+stats_spp9$prop_ext <- stats_spp9$pri_ext/length(supporters)
+stats_spp9 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp9)
+AUC_spp9 <- AUC(stats_spp9$prop_ext, stats_spp9$prop_surv, from = min(min(stats_spp9$prop_ext)), to = max(max(stats_spp9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp10$prop_surv <- (susc-stats_spp10$sec_ext)/susc
+stats_spp10$prop_ext <- stats_spp10$pri_ext/length(supporters)
+stats_spp10 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp10)
+AUC_spp10 <- AUC(stats_spp10$prop_ext, stats_spp10$prop_surv, from = min(min(stats_spp10$prop_ext)), to = max(max(stats_spp10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp11$prop_surv <- (susc-stats_spp11$sec_ext)/susc
+stats_spp11$prop_ext <- stats_spp11$pri_ext/length(supporters)
+stats_spp11 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp11)
+AUC_spp11 <- AUC(stats_spp11$prop_ext, stats_spp11$prop_surv, from = min(min(stats_spp11$prop_ext)), to = max(max(stats_spp11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+
+#for each ES sequence
+stats_ES4$prop_surv <- (8-stats_ES4$X0L)/8
+stats_ES4$prop_ext <- stats_ES4$pri_ext/ESall
+stats_ES4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES4)+1, prop_surv = 1, prop_ext = 0), stats_ES4)
+AUC_ES4 <- AUC(stats_ES4$prop_ext, stats_ES4$prop_surv, from = min(min(stats_ES4$prop_ext)), to = max(max(stats_ES4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES5$prop_surv <- (8-stats_ES5$X0L)/8
+stats_ES5$prop_ext <- stats_ES5$pri_ext/ESall
+stats_ES5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES5)+1, prop_surv = 1, prop_ext = 0), stats_ES5)
+AUC_ES5 <- AUC(stats_ES5$prop_ext, stats_ES5$prop_surv, from = min(min(stats_ES5$prop_ext)), to = max(max(stats_ES5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES6$prop_surv <- (8-stats_ES6$X0L)/8
+stats_ES6$prop_ext <- stats_ES6$pri_ext/ESall
+stats_ES6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES6)+1, prop_surv = 1, prop_ext = 0), stats_ES6)
+AUC_ES6 <- AUC(stats_ES6$prop_ext, stats_ES6$prop_surv, from = min((min(stats_ES6$prop_ext))), to = max(max(stats_ES6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES7$prop_surv <- (8-stats_ES7$X0L)/8
+stats_ES7$prop_ext <- stats_ES7$pri_ext/ESall
+stats_ES7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES7)+1, prop_surv = 1, prop_ext = 0), stats_ES7)
+AUC_ES7 <- AUC(stats_ES7$prop_ext, stats_ES7$prop_surv, from = min((min(stats_ES7$prop_ext))), to = max(max(stats_ES7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES8$prop_surv <- (8-stats_ES8$X0L)/8
+stats_ES8$prop_ext <- stats_ES8$pri_ext/length(providers)
+stats_ES8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES8)+1, prop_surv = 1, prop_ext = 0), stats_ES8)
+AUC_ES8 <- AUC(stats_ES8$prop_ext, stats_ES8$prop_surv, from = min((min(stats_ES8$prop_ext))), to = max(max(stats_ES8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES9$prop_surv <- (8-stats_ES9$X0L)/8
+stats_ES9$prop_ext <- stats_ES9$pri_ext/length(supporters)
+stats_ES9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES9)+1, prop_surv = 1, prop_ext = 0), stats_ES9)
+AUC_ES9 <- AUC(stats_ES9$prop_ext, stats_ES9$prop_surv, from = min((min(stats_ES9$prop_ext))), to = max(max(stats_ES9$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES10$prop_surv <- (8-stats_ES10$X0L)/8
+stats_ES10$prop_ext <- stats_ES10$pri_ext/length(supporters)
+stats_ES10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES10)+1, prop_surv = 1, prop_ext = 0), stats_ES10)
+AUC_ES10 <- AUC(stats_ES10$prop_ext, stats_ES10$prop_surv, from = min((min(stats_ES10$prop_ext))), to = max(max(stats_ES10$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES11$prop_surv <- (8-stats_ES11$X0L)/8
+stats_ES11$prop_ext <- stats_ES11$pri_ext/length(supporters)
+stats_ES11 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES11)+1, prop_surv = 1, prop_ext = 0), stats_ES11)
+AUC_ES11 <- AUC(stats_ES11$prop_ext, stats_ES11$prop_surv, from = min((min(stats_ES11$prop_ext))), to = max(max(stats_ES11$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+```
+
+```{r}
+#graphics creation
+#food web curves
+stats_spp <- cbind(stats_spp4$prop_ext, stats_spp4$prop_surv, stats_spp5$prop_ext, stats_spp5$prop_surv, stats_spp6$prop_ext, stats_spp6$prop_surv, stats_spp7$prop_ext, stats_spp7$prop_surv, stats_spp8$prop_ext, stats_spp8$prop_surv, stats_spp9$prop_ext, stats_spp9$prop_surv, stats_spp10$prop_ext, stats_spp10$prop_surv, stats_spp11$prop_ext, stats_spp11$prop_surv)
+stats_spp <- as.data.frame(stats_spp)
+colnames(stats_spp) <- c("spp4ext", "spp4surv", "spp5ext", "spp5surv", "spp6ext", "spp6surv", "spp7ext", "spp7surv", "spp8ext", "spp8surv", "spp9ext", "spp9surv", "spp10ext", "spp10surv", "spp11ext", "spp11surv")
+ggplot(stats_spp) + geom_line(aes(x = spp4ext, y = spp4surv, color = "seq4")) + geom_line(aes(x = spp5ext, y = spp5surv, color = "seq5")) + geom_line(aes(x = spp6ext, y = spp6surv, color = "seq6")) + geom_line(aes(x = spp7ext, y = spp7surv, color = "seq7")) + geom_line(aes(x = spp8ext, y = spp8surv, color = "seq8")) + geom_line(aes(x = spp9ext, y = spp9surv, color = "seq9")) + geom_line(aes(x = spp10ext, y = spp10surv, color = "seq10")) + geom_line(aes(x = spp11ext, y = spp11surv, color = "seq11")) + ylim(c(0,1)) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proportion of species not secondarily lost") + xlab("Proportion of species eliminated by extinction sequence") + guides(color=guide_legend(title="Sequence type")) + scale_color_manual(values=c("#ffbaac", "#ee6a4f","#a14939","#b0e0e1","#02cdcd","#028b8b","#b2bfdf","#56506e"))
+
+#ES curves
+stats_ES <- cbind(stats_ES4$prop_ext, stats_ES4$prop_surv, stats_ES5$prop_ext, stats_ES5$prop_surv, stats_ES6$prop_ext, stats_ES6$prop_surv, stats_ES7$prop_ext, stats_ES7$prop_surv, stats_ES8$prop_ext, stats_ES8$prop_surv, stats_ES9$prop_ext, stats_ES9$prop_surv, stats_ES10$prop_ext, stats_ES10$prop_surv, stats_ES11$prop_ext, stats_ES11$prop_surv)
+stats_ES <- as.data.frame(stats_ES)
+colnames(stats_ES) <- c("ES4ext", "ES4surv", "ES5ext", "ES5surv", "ES6ext", "ES6surv", "ES7ext", "ES7surv", "ES8ext", "ES8surv", "ES9ext", "ES9surv", "ES10ext", "ES10surv", "ES11ext", "ES11surv")
+ggplot(stats_ES) + geom_line(aes(x = ES4ext, y = ES4surv, color = "seq 4")) + geom_line(aes(x = ES5ext, y = ES5surv, color = "seq 5")) + geom_line(aes(x = ES6ext, y = ES6surv, color = "seq 6")) + geom_line(aes(x = ES7ext, y = ES7surv, color = "seq 7")) + geom_line(aes(x = ES8ext, y = ES8surv, color = "seq 8")) + geom_line(aes(x = ES9ext, y = ES9surv, color = "seq 9")) + geom_line(aes(x = ES10ext, y = ES10surv, color = "seq 10")) + geom_line(aes(x = ES11ext, y = ES11surv, color = "seq 11")) + ylim(c(0,1)) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proportion of ES remaining") + xlab("Proportion of species eliminated by extinction sequence") + guides(color=guide_legend(title="Sequence type"))+ scale_color_manual(values=c("#ffbaac","#ee6a4f", "#a14939","#b0e0e1","#02cdcd","#028b8b","#b2bfdf","#56506e"))
+```
+
+```{r}
+#correlation calculations and graphics
+AUC_ES <- c(AUC_ES4, AUC_ES5, AUC_ES6, AUC_ES7, AUC_ES8, AUC_ES9, AUC_ES10, AUC_ES11)
+AUC_spp <- c(AUC_spp4, AUC_spp5, AUC_spp6, AUC_spp7, AUC_spp8, AUC_spp9, AUC_spp10, AUC_spp11)
+seq <- c("seq 4", "seq 5", "seq 6", "seq 7", "seq8", "seq 9", "seq 10", "seq 11")
+AUCs <- data.frame(AUC_ES, AUC_spp, seq)
+AUCs <- rbind(AUCs, minran, maxran, meanran)
+
+#sequence ordering
+type <- c("connection", "connection", "connection", "connection","subgroups","subgroups","subgroups","subgroups","random","random","random")
+AUCs <- as.data.frame(cbind(AUCs, type))
+
+#linear regression
+AUCs$AUC_ES <- as.numeric(AUCs$AUC_ES)
+AUCs$AUC_spp <- as.numeric(AUCs$AUC_spp)
+summary(lm(AUCs$AUC_ES ~ AUCs$AUC_spp))
+
+#graphic
+ggplot(AUCs, aes(x = AUC_spp, y = AUC_ES, shape = type)) + geom_point(size = 3) + geom_abline(intercept = 0.1634, slope = 0.816 , color = "cyan4", linewidth = 0.75) + ylim(c(0,1)) + xlim(c(0,1)) + ylab("ES robustness") + xlab("Network robustness") + theme_classic() + scale_shape_manual(values=c("subgroups"=15,"connection"=16, "random" = 17)) + labs(shape = "Sequence class")
+
+#correlation tests
+cor.test(AUCs$AUC_spp, AUCs$AUC_ES, method = "spearman") #overall correlation
+summary(lm(AUCs$AUC_ES ~ AUCs$AUC_spp))
+AUC_eet <- AUCs[c(5,6,7,8),]  #subgroups correlation
+cor.test(AUC_eet$AUC_spp, AUC_eet$AUC_ES, method = "spearman")
+summary(lm(AUC_eet$AUC_ES ~ AUC_eet$AUC_spp))
+AUC_es <- AUCs[c(1,2,3,4),]  #connection correlation
+cor.test(AUC_es$AUC_spp, AUC_es$AUC_ES, method = "spearman")
+summary(lm(AUC_es$AUC_ES ~ AUC_es$AUC_spp))
+AUC_ran <- AUCs[c(9,10,11),]  #random correlation
+cor.test(AUC_ran$AUC_spp, AUC_ran$AUC_ES, method = "spearman")
+summary(lm(AUC_ran$AUC_ES ~ AUC_ran$AUC_spp))
+```
+
+```{r}
+#tracks ESPs remaining at each point in simulations
+net_ESP4<- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP4 <- rbind(net_ESP4, ESP_lost)
+}
+net_ESP5<- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP5 <- rbind(net_ESP5, ESP_lost)
+}
+net_ESP6<- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP6 <- rbind(net_ESP6, ESP_lost)
+}
+net_ESP7<- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP7 <- rbind(net_ESP7, ESP_lost)
+}
+net_ESP8<- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP8 <- rbind(net_ESP8, ESP_lost)
+}
+net_ESP9<- data.frame()
+for (i in 1:length(net9_ES)){
+  species <- as.data.frame(net9_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP9 <- rbind(net_ESP9, ESP_lost)
+}
+net_ESP10<- data.frame()
+for (i in 1:length(net10_ES)){
+  species <- as.data.frame(net10_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP10 <- rbind(net_ESP10, ESP_lost)
+}
+net_ESP11<- data.frame()
+for (i in 1:length(net11_ES)){
+  species <- as.data.frame(net11_ES[[i]])
+  species <- names(species)
+  species_diff <- intersect(providers,species)
+  ESP_lost <- (length(providers)-length(species_diff))
+  net_ESP11 <- rbind(net_ESP11, ESP_lost)
+}
+net_ESP4$pri_ext <- 1:nrow(net_ESP4)
+num <- count(net_ESP4)
+num <- as.integer(num)
+net_ESP4$n <- num - net_ESP4$pri_ext
+
+net_ESP5$pri_ext <- 1:nrow(net_ESP5)
+num <- count(net_ESP5)
+num <- as.integer(num)
+net_ESP5$n <- num - net_ESP5$pri_ext
+
+net_ESP6$pri_ext <- 1:nrow(net_ESP6)
+num <- count(net_ESP6)
+num <- as.integer(num)
+net_ESP6$n <- num - net_ESP6$pri_ext
+
+net_ESP7$pri_ext <- 1:nrow(net_ESP7)
+num <- count(net_ESP7)
+num <- as.integer(num)
+net_ESP7$n <- num - net_ESP7$pri_ext
+
+net_ESP8$pri_ext <- 1:nrow(net_ESP8)
+num <- count(net_ESP8)
+num <- as.integer(num)
+net_ESP8$n <- num - net_ESP8$pri_ext
+
+net_ESP9$pri_ext <- 1:nrow(net_ESP9)
+num <- count(net_ESP9)
+num <- as.integer(num)
+net_ESP9$n <- num - net_ESP9$pri_ext
+
+net_ESP10$pri_ext <- 1:nrow(net_ESP10)
+num <- count(net_ESP10)
+num <- as.integer(num)
+net_ESP10$n <- num - net_ESP10$pri_ext
+
+net_ESP11$pri_ext <- 1:nrow(net_ESP11)
+num <- count(net_ESP11)
+num <- as.integer(num)
+net_ESP11$n <- num - net_ESP11$pri_ext
+
+stats_ESP4 <- top_n(net_ESP4, nrow(stats_spp4), n)
+stats_ESP5 <- top_n(net_ESP5, nrow(stats_spp5), n)
+stats_ESP6 <- top_n(net_ESP6, nrow(stats_spp6), n)
+stats_ESP7 <- top_n(net_ESP7, nrow(stats_spp7), n)
+stats_ESP8 <- top_n(net_ESP8, 81, n)
+stats_ESP9 <- top_n(net_ESP9, 127, n)
+stats_ESP10 <- top_n(net_ESP10, 158, n)
+stats_ESP11 <- top_n(net_ESP11, 115, n)
+
+#for ESPs
+stats_ESP4$prop_surv <- (83-stats_ESP4$X8L)/83
+stats_ESP4$prop_ext <- stats_ESP4$pri_ext/ESall
+stats_ESP4 <- rbind(data.frame(X8L = 0, pri_ext = 0, n = nrow(stats_ESP4)+1, prop_surv = 1, prop_ext = 0), stats_ESP4)
+stats_ESP5$prop_surv <- (83-stats_ESP5$X0L)/83
+stats_ESP5$prop_ext <- stats_ESP5$pri_ext/ESall
+stats_ESP5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ESP5)+1, prop_surv = 1, prop_ext = 0), stats_ESP5)
+stats_ESP6$prop_surv <- (83-stats_ESP6$X8L)/83
+stats_ESP6$prop_ext <- stats_ESP6$pri_ext/ESall
+stats_ESP6 <- rbind(data.frame(X8L = 0, pri_ext = 0, n = nrow(stats_ESP6)+1, prop_surv = 1, prop_ext = 0), stats_ESP6)
+stats_ESP7$prop_surv <- (83-stats_ESP7$X2L)/83
+stats_ESP7$prop_ext <- stats_ESP7$pri_ext/ESall
+stats_ESP7 <- rbind(data.frame(X2L = 0, pri_ext = 0, n = nrow(stats_ESP7)+1, prop_surv = 1, prop_ext = 0), stats_ESP7)
+stats_ESP8$prop_surv <- (83-stats_ESP8$X1L)/83
+stats_ESP8$prop_ext <- stats_ESP8$pri_ext/length(providers)
+stats_ESP8 <- rbind(data.frame(X1L = 0, pri_ext = 0, n = nrow(stats_ESP8)+1, prop_surv = 1, prop_ext = 0), stats_ESP8)
+stats_ESP9$prop_surv <- (83-stats_ESP9$X0L)/83
+stats_ESP9$prop_ext <- stats_ESP9$pri_ext/length(supporters)
+stats_ESP9 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ESP9)+1, prop_surv = 1, prop_ext = 0), stats_ESP9)
+stats_ESP10$prop_surv <- (83-stats_ESP10$X0L)/83
+stats_ESP10$prop_ext <- stats_ESP10$pri_ext/length(supporters)
+stats_ESP10 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ESP10)+1, prop_surv = 1, prop_ext = 0), stats_ESP10)
+stats_ESP11$prop_surv <- (83-stats_ESP11$X8L)/83
+stats_ESP11$prop_ext <- stats_ESP11$pri_ext/length(supporters)
+stats_ESP11 <- rbind(data.frame(X8L = 0, pri_ext = 0, n = nrow(stats_ESP11)+1, prop_surv = 1, prop_ext = 0), stats_ESP11)
+
+stats_ESP <- cbind(stats_ESP4$prop_ext, stats_ESP4$prop_surv, stats_ESP5$prop_ext, stats_ESP5$prop_surv, stats_ESP6$prop_ext, stats_ESP6$prop_surv, stats_ESP7$prop_ext, stats_ESP7$prop_surv, stats_ESP8$prop_ext, stats_ESP8$prop_surv, stats_ESP9$prop_ext, stats_ESP9$prop_surv, stats_ESP10$prop_ext, stats_ESP10$prop_surv, stats_ESP11$prop_ext, stats_ESP11$prop_surv)
+stats_ESP <- as.data.frame(stats_ESP)
+colnames(stats_ESP) <- c("ESP4ext", "ESP4surv", "ESP5ext", "ESP5surv", "ESP6ext", "ESP6surv", "ESP7ext", "ESP7surv", "ESP8ext", "ESP8surv", "ESP9ext", "ESP9surv", "ESP10ext", "ESP10surv", "ESP11ext", "ESP11surv")
+ggplot(stats_ESP) + geom_line(aes(x = ESP4ext, y = ESP4surv, color = "seq 4")) + geom_line(aes(x = ESP5ext, y = ESP5surv, color = "seq 5")) + geom_line(aes(x = ESP6ext, y = ESP6surv, color = "seq 6")) + geom_line(aes(x = ESP7ext, y = ESP7surv, color = "seq 7")) + geom_line(aes(x = ESP8ext, y = ESP8surv, color = "seq 8")) + geom_line(aes(x = ESP9ext, y = ESP9surv, color = "seq 9")) + geom_line(aes(x = ESP10ext, y = ESP10surv, color = "seq 10")) + geom_line(aes(x = ESP11ext, y = ESP11surv, color = "seq 11")) + ylim(c(0,1)) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proportion of ESPs remaining") + xlab("Proportion of species eliminated by extinction sequence") + guides(color=guide_legend(title="Sequence type"))+ scale_color_manual(values=c("#ffbaac","#ee6a4f", "#a14939","#b0e0e1","#02cdcd","#028b8b","#b2bfdf","#56506e"))
+
+w <- read_csv("./Book5.csv")
+ggplot(w,aes(x = reorder(seq, +num),y = auc)) + geom_bar(aes(fill = type),stat = "identity",position = "dodge") + theme_classic() + scale_fill_manual(values=c("#ee6a4f", "#02cdcd"))
+```

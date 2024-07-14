@@ -1,0 +1,121 @@
+---
+title: "Integrated trophic web"
+author: "Mitch Porter"
+output: html_document
+date: "2023-11-09"
+---
+
+Work with original trophic web
+```{r setup, include=FALSE}
+#load packages
+library(ggplot2)
+library(tidyverse)
+library(igraph)
+library(multiweb)
+library(NetIndices)
+```
+
+```{r}
+#load data
+links <- read_csv("links.csv")
+nodes <- read_csv("nodes.csv")
+
+#create igraph
+igraph <- graph_from_data_frame(d=links, vertices=nodes, directed=T)
+V(igraph)$label <- NA
+```
+
+```{r}
+net <- graph.data.frame(links, directed = T, vertices = nodes)
+mat <- as_adjacency_matrix(net, sparse = FALSE, attr = NULL)
+tl <- TrophInd(Tij = t(mat))
+nodes$tl = tl
+igraph <- graph_from_data_frame(d=links, vertices=nodes[,c(1,2)], directed=T)
+
+mycol1 <- rgb(254, 115, 86, max = 255, alpha = 230)
+mycol2 <- rgb(2, 139, 139, max = 255, alpha = 200)
+mycol3 <- rgb(2, 205, 205, max = 255, alpha = 180)
+mycol4 <- rgb(217, 217, 217, max = 255, alpha = 200)
+mycol5 <- rgb(166, 166, 166, max = 255, alpha = 200)
+
+plot_troph <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype > 2, 13, log10(deg/2)*vertexSizeFactor+vertexSizeMin)
+  V(g)$shape <- ifelse(V(g)$vertextype > 2, "square", "circle")
+  V(g)$color <- ifelse(V(g)$vertextype > 2, mycol1, 
+                      ifelse(V(g)$vertextype == 2, mycol2, 
+                        ifelse(V(g)$vertextype == 1, mycol3, mycol5 
+                             )))
+  V(g)$frame.color <- NA
+  E(g)$color <- ifelse(E(g)$edgetype > 0, "grey15", mycol4)
+   if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0)
+      if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=0.3,
+       edge.curved=0.2, canvas.width = 1000, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=0.3,
+         edge.curved=0.2, canvas.width = 5000, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew-minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_troph(igraph)
+```
